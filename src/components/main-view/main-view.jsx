@@ -21,6 +21,11 @@ export const MainView = () => {
 
         setMovies(moviesFromApi);
       });
+
+      .catch(error => {
+        window.alert("An error occured: " + error);
+        
+      })
   }, []);
 
   const [selectedMovie, setSelectedMovie] = useState(null);
