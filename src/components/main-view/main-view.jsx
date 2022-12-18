@@ -4,6 +4,7 @@ import { MovieView } from "../movie-view/movie-view";
 
 export const MainView = () => {
   const [movies, setMovies] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetch("https://my-flix-db-jd.herokuapp.com/movies")
@@ -20,15 +21,19 @@ export const MainView = () => {
         });
 
         setMovies(moviesFromApi);
-      });
-
-      .catch(error => {
-        window.alert("An error occured: " + error);
-        
+        setLoading(false); // Set loading to false when data is fetched
       })
+      .catch((error) => {
+        window.alert("An error occurred: " + error);
+        setLoading(false); // Set loading to false when an error occurs
+      });
   }, []);
 
   const [selectedMovie, setSelectedMovie] = useState(null);
+
+  const LoadingIndicator = () => {
+    return <div>Loading...</div>;
+  };
 
   if (selectedMovie) {
     return (
@@ -45,15 +50,19 @@ export const MainView = () => {
 
   return (
     <div>
-      {movies.map((movie) => (
-        <MovieCard
-          key={movie.id}
-          movie={movie}
-          onMovieClick={(newSelectedMovie) => {
-            setSelectedMovie(newSelectedMovie);
-          }}
-        />
-      ))}
+      {loading ? (
+        <LoadingIndicator />
+      ) : (
+        movies.map((movie) => (
+          <MovieCard
+            key={movie.id}
+            movie={movie}
+            onMovieClick={(newSelectedMovie) => {
+              setSelectedMovie(newSelectedMovie);
+            }}
+          />
+        ))
+      )}
     </div>
   );
 };
