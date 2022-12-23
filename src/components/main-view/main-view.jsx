@@ -5,6 +5,7 @@ import { LoginView } from "../login-view/login-view";
 import { SignupView } from "../signup-view/signup-view";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import "./main-view.scss";
 
 export const MainView = () => {
   // Declare state variables to hold movies, user and token data, and a loading indicator
@@ -88,15 +89,20 @@ export const MainView = () => {
               />
             </Col>
           ))}
-          <button
-            onClick={() => {
-              setUser(null);
-              setToken(null);
-              localStorage.clear();
-            }}
-          >
-            Logout
-          </button>
+          <Row className="justify-content-center">
+            <Col xs="auto">
+              <button
+                onClick={() => {
+                  setUser(null);
+                  setToken(null);
+                  localStorage.clear();
+                }}
+                className="btn btn-primary"
+              >
+                Logout
+              </button>
+            </Col>
+          </Row>
         </>
       )}
     </Row>
