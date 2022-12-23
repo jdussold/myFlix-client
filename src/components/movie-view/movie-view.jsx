@@ -4,9 +4,9 @@ export const MovieView = ({ movie, onBackClick }) => {
   const { image, title, description, genre, director } = movie;
 
   return (
-    <div className="container-fluid">
+    <div>
       <div>
-        <img src={image} />
+        <img src={image} className="img-fluid w-50 d-block mx-auto" />
       </div>
       <div>
         <span>Title: </span>
