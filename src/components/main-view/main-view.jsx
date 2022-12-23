@@ -3,8 +3,7 @@ import { MovieCard } from "../movie-card/movie-card";
 import { MovieView } from "../movie-view/movie-view";
 import { LoginView } from "../login-view/login-view";
 import { SignupView } from "../signup-view/signup-view";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
+import { Row, Col, Button } from "react-bootstrap";
 import "./main-view.scss";
 
 export const MainView = () => {
@@ -16,6 +15,8 @@ export const MainView = () => {
   const [token, setToken] = useState(storedToken ? storedToken : null);
   const [loading, setLoading] = useState(true);
   const [selectedMovie, setSelectedMovie] = useState(null);
+  const [signupModalOpen, setSignupModalOpen] = useState(false);
+  const [loginModalOpen, setLoginModalOpen] = useState(false);
 
   useEffect(() => {
     if (!token) {
@@ -54,13 +55,41 @@ export const MainView = () => {
   };
 
   return (
-    <Row className="justify-content-md-center">
+    <Row className="my-4 justify-content-md-center">
       {!user ? (
-        // If the user is not logged in, render the LoginView and SignupView components
+        // If the user is not logged in, render the login and signup buttons
         <Col md={5}>
-          <LoginView onLoggedIn={(user) => setUser(user)} />
-          or
-          <SignupView />
+          <Row className="my-4 justify-content-md-center">
+            <Col xs="auto">
+              <Button
+                onClick={() => setLoginModalOpen(!loginModalOpen)}
+                variant="primary"
+              >
+                Login
+              </Button>
+            </Col>
+          </Row>
+          <Row className="my-4 justify-content-md-center">
+            <Col xs="auto">or</Col>
+          </Row>
+          <Row className="my-4 justify-content-md-center">
+            <Col xs="auto">
+              <Button
+                onClick={() => setSignupModalOpen(!signupModalOpen)}
+                variant="primary"
+              >
+                Signup
+              </Button>
+            </Col>
+          </Row>
+          {/* If the loginModalOpen or signupModalOpen flag is true, render the LoginView or SignupView component */}
+          {loginModalOpen && (
+            <LoginView
+              onLoggedIn={(user) => setUser(user)}
+              setLoading={setLoading}
+            />
+          )}
+          {signupModalOpen && <SignupView />}
         </Col>
       ) : loading ? (
         // If the user is logged in and the data is still loading, render the LoadingIndicator
