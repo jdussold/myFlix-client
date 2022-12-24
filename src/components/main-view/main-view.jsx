@@ -18,6 +18,17 @@ export const MainView = () => {
   const [signupModalOpen, setSignupModalOpen] = useState(false);
   const [loginModalOpen, setLoginModalOpen] = useState(false);
 
+  // Define toggleSignupModal and toggleLoginModal functions
+  const toggleSignupModal = () => {
+    setSignupModalOpen(true);
+    setLoginModalOpen(false);
+  };
+
+  const toggleLoginModal = () => {
+    setLoginModalOpen(true);
+    setSignupModalOpen(false);
+  };
+
   useEffect(() => {
     if (!token) {
       return;
@@ -32,6 +43,7 @@ export const MainView = () => {
         // Map movie data from the API to a new format
         const moviesFromApi = data.map((movie) => {
           return {
+            id: movie._id,
             title: movie.Title,
             image: movie.ImagePath,
             description: movie.Description,
@@ -61,10 +73,7 @@ export const MainView = () => {
         <Col md={5}>
           <Row className="my-4 justify-content-md-center">
             <Col xs="auto">
-              <Button
-                onClick={() => setLoginModalOpen(!loginModalOpen)}
-                variant="primary"
-              >
+              <Button onClick={toggleLoginModal} variant="primary">
                 Login
               </Button>
             </Col>
@@ -74,10 +83,7 @@ export const MainView = () => {
           </Row>
           <Row className="my-4 justify-content-md-center">
             <Col xs="auto">
-              <Button
-                onClick={() => setSignupModalOpen(!signupModalOpen)}
-                variant="primary"
-              >
+              <Button onClick={toggleSignupModal} variant="primary">
                 Signup
               </Button>
             </Col>
@@ -85,7 +91,10 @@ export const MainView = () => {
           {/* If the loginModalOpen or signupModalOpen flag is true, render the LoginView or SignupView component */}
           {loginModalOpen && (
             <LoginView
-              onLoggedIn={(user) => setUser(user)}
+              onLoggedIn={(user, token) => {
+                setUser(user);
+                setToken(token);
+              }}
               setLoading={setLoading}
             />
           )}
@@ -111,6 +120,7 @@ export const MainView = () => {
           {movies.map((movie) => (
             <Col className="mb-5" key={movie.id} md={3}>
               <MovieCard
+                key={movie._id}
                 movie={movie}
                 onMovieClick={(newSelectedMovie) => {
                   setSelectedMovie(newSelectedMovie);
