@@ -3,17 +3,23 @@ import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 
 export const LoginView = ({ onLoggedIn, setLoading }) => {
+  // Declare a state variable called "username" and a function to update it
   const [username, setUsername] = useState("");
+  // Declare a state variable called "password" and a function to update it
   const [password, setPassword] = useState("");
+
+  // This function is called when the form is submitted
   const handleSubmit = (event) => {
     // this prevents the default behavior of the form which is to reload the entire page
     event.preventDefault();
 
+    // Create an object with the username and password
     const data = {
       Username: username,
       Password: password,
     };
 
+    // Make a POST request to the login endpoint with the data
     fetch("https://my-flix-db-jd.herokuapp.com/login", {
       method: "POST",
       headers: {
@@ -24,6 +30,7 @@ export const LoginView = ({ onLoggedIn, setLoading }) => {
       .then((response) => response.json())
       .then((data) => {
         console.log("Login response: ", data);
+        // If the server returns a user object, store the user and token in local storage and call the "onLoggedIn" function
         if (data.user) {
           localStorage.setItem("user", JSON.stringify(data.user));
           localStorage.setItem("token", data.token);
@@ -37,6 +44,7 @@ export const LoginView = ({ onLoggedIn, setLoading }) => {
       });
   };
 
+  // Render the form with inputs for the username and password and a submit button
   return (
     <Form onSubmit={handleSubmit}>
       <Form.Group controlId="formUsername">
