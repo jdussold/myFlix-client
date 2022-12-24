@@ -1,9 +1,11 @@
-//Here you import the PropTypes library
+//Import the PropTypes library
 import PropTypes from "prop-types";
 
+// Import the Button and Card components from the react-bootstrap library
 import { Button, Card } from "react-bootstrap";
 
 //The MovieCard Function Component
+// The component returns a Card element with an image, title, director, and a button
 export const MovieCard = ({ movie, onMovieClick }) => {
   return (
     <Card className="h-100" onClick={() => onMovieClick(movie)}>
