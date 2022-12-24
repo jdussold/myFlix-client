@@ -14,6 +14,8 @@ export const LoginView = ({ onLoggedIn, setLoading }) => {
       Password: password,
     };
 
+    setLoading(true); // set loading state to true
+
     fetch("https://my-flix-db-jd.herokuapp.com/login", {
       method: "POST",
       headers: {
@@ -28,13 +30,15 @@ export const LoginView = ({ onLoggedIn, setLoading }) => {
           localStorage.setItem("user", JSON.stringify(data.user));
           localStorage.setItem("token", data.token);
           onLoggedIn(data.user, data.token);
-          setLoading(false); // Set loading to false after data is fetched
+          setLoading(false); // set loading state to false after successful login
         } else {
           alert("No such user");
+          setLoading(false); // set loading state to false after failed login
         }
       })
       .catch((e) => {
         alert("Something went wrong");
+        setLoading(false); // set loading state to false if there was an error
       });
   };
 
