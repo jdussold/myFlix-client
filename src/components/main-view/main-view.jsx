@@ -9,8 +9,10 @@ import "./main-view.scss";
 export const MainView = () => {
   // Declare state variables to hold movies, user and token data, and a loading indicator
   const [movies, setMovies] = useState([]);
+  // Get stored user and token data from local storage
   const storedUser = JSON.parse(localStorage.getItem("user"));
   const storedToken = localStorage.getItem("token");
+  // Set initial values for user and token using stored data, or null if not available
   const [user, setUser] = useState(storedUser ? storedUser : null);
   const [token, setToken] = useState(storedToken ? storedToken : null);
   const [loading, setLoading] = useState(true);
@@ -18,18 +20,20 @@ export const MainView = () => {
   const [signupModalOpen, setSignupModalOpen] = useState(false);
   const [loginModalOpen, setLoginModalOpen] = useState(false);
 
-  // Define toggleSignupModal and toggleLoginModal functions
+  // Define toggleSignupModal function to open the signup modal and close the login modal
   const toggleSignupModal = () => {
     setSignupModalOpen(true);
     setLoginModalOpen(false);
   };
 
+  // Define toggleLoginModal function to open the login modal and close the signup modal
   const toggleLoginModal = () => {
     setLoginModalOpen(true);
     setSignupModalOpen(false);
   };
 
   useEffect(() => {
+    // If there is no token, return early
     if (!token) {
       return;
     }
@@ -38,7 +42,7 @@ export const MainView = () => {
     fetch("https://my-flix-db-jd.herokuapp.com/movies", {
       headers: { Authorization: `Bearer ${token}` },
     })
-      .then((response) => response.json())
+      .then((response) => response.json()) // Convert the response to JSON
       .then((data) => {
         // Map movie data from the API to a new format
         const moviesFromApi = data.map((movie) => {
@@ -52,13 +56,18 @@ export const MainView = () => {
           };
         });
 
+        // Update the movies state with the newly formatted data
         setMovies(moviesFromApi);
-        setLoading(false); // Set loading to false when data is fetched
+        // Set loading to false once the data has been fetched
+        setLoading(false);
       })
       .catch((error) => {
+        // Display an alert if there is an error
         window.alert("An error occurred: " + error);
-        setLoading(false); // Set loading to false when an error occurs
+        // Set loading to false if there is an error
+        setLoading(false);
       });
+    // Only re-run this effect if the token changes
   }, [token]);
 
   // Render a loading indicator
