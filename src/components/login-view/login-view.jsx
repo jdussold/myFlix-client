@@ -13,7 +13,7 @@ export const LoginView = ({ onLoggedIn, setLoading }) => {
     // this prevents the default behavior of the form which is to reload the entire page
     event.preventDefault();
 
-    // Create an object with the username and password
+    // Create an object with the form data
     const data = {
       Username: username,
       Password: password,
