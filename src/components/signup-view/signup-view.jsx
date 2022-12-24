@@ -3,14 +3,18 @@ import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 
 export const SignupView = () => {
+  // Declare state variables for the form inputs
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [birthday, setBirthday] = useState("");
 
+  // Event handler for when the form is submitted
   const handleSubmit = (event) => {
+    // Prevent the default form submission behavior
     event.preventDefault();
 
+    // Create an object with the form data
     const data = {
       Username: username,
       Password: password,
@@ -18,6 +22,7 @@ export const SignupView = () => {
       Birthday: birthday,
     };
 
+    // Send a POST request to the server with the form data
     fetch("https://my-flix-db-jd.herokuapp.com/users", {
       method: "POST",
       body: JSON.stringify(data),
@@ -25,15 +30,19 @@ export const SignupView = () => {
         "Content-Type": "application/json",
       },
     }).then((response) => {
+      // If the request was successful, show an alert and reload the page
       if (response.ok) {
         alert("Signup successful");
         window.location.reload();
-      } else {
+      }
+      // If the request failed, show an alert
+      else {
         alert("Signup failed");
       }
     });
   };
 
+  // Render the form
   return (
     <Form onSubmit={handleSubmit}>
       <Form.Group controlId="formUsername">
