@@ -8,6 +8,8 @@ export const ProfileView = () => {
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [birthday, setBirthday] = useState("");
+  const [favoriteMovies, setFavoriteMovies] = useState([]);
+  const [favoriteMoviesInput, setFavoriteMoviesInput] = useState("");
 
   // Event handler for when the form is submitted
   const handleSubmit = (event) => {
@@ -31,7 +33,7 @@ export const ProfileView = () => {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
     }).then((response) => {
-      // If the request was successful, update the user's token and show an alert
+      // If the request was successful
       if (response.ok) {
         // Send a request to the server to generate a new token for the user
         fetch(
@@ -55,6 +57,7 @@ export const ProfileView = () => {
         alert("Profile update successful");
         setUsername(username);
         setPassword(password);
+
         setEmail(email);
         setBirthday(birthday);
       }
@@ -112,6 +115,47 @@ export const ProfileView = () => {
       <Button className="my-4" variant="primary" type="submit">
         Update Profile
       </Button>
+
+      <Form.Group controlId="formFavoriteMovies">
+        <Form.Label>Add Favorite Movie:</Form.Label>
+        <Form.Control
+          type="text"
+          value={favoriteMoviesInput}
+          onChange={(e) => setFavoriteMoviesInput(e.target.value)}
+        />
+        <Button
+          className="my-2"
+          variant="primary"
+          onClick={() => {
+            setFavoriteMovies([...favoriteMovies, favoriteMoviesInput]);
+            setFavoriteMoviesInput("");
+          }}
+        >
+          Add Movie
+        </Button>
+      </Form.Group>
+
+      <Form.Group controlId="formFavoriteMoviesList">
+        <Form.Label>Favorite Movies:</Form.Label>
+        <ul>
+          {favoriteMovies.map((movie, index) => (
+            <li key={index}>
+              {movie}
+              <Button
+                className="mx-2"
+                variant="secondary"
+                onClick={() => {
+                  setFavoriteMovies(
+                    favoriteMovies.filter((_, i) => i !== index)
+                  );
+                }}
+              >
+                Remove
+              </Button>
+            </li>
+          ))}
+        </ul>
+      </Form.Group>
     </Form>
   );
 };
