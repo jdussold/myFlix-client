@@ -3,7 +3,10 @@ import { MovieCard } from "../movie-card/movie-card";
 import { MovieView } from "../movie-view/movie-view";
 import { LoginView } from "../login-view/login-view";
 import { SignupView } from "../signup-view/signup-view";
+import { NavigationBar } from "../navigation-bar/navigation-bar";
+import { ProfileView } from "../profile-view/profile-view";
 import { Row, Col, Button } from "react-bootstrap";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import "./main-view.scss";
 
 export const MainView = () => {
@@ -16,22 +19,8 @@ export const MainView = () => {
   const [user, setUser] = useState(storedUser ? storedUser : null);
   const [token, setToken] = useState(storedToken ? storedToken : null);
   const [loading, setLoading] = useState(true);
-  const [selectedMovie, setSelectedMovie] = useState(null);
-  const [signupModalOpen, setSignupModalOpen] = useState(false);
-  const [loginModalOpen, setLoginModalOpen] = useState(false);
 
-  // Define toggleSignupModal function to open the signup modal and close the login modal
-  const toggleSignupModal = () => {
-    setSignupModalOpen(true);
-    setLoginModalOpen(false);
-  };
-
-  // Define toggleLoginModal function to open the login modal and close the signup modal
-  const toggleLoginModal = () => {
-    setLoginModalOpen(true);
-    setSignupModalOpen(false);
-  };
-
+  // Fetch movie data when the token changes
   useEffect(() => {
     // If there is no token, return early
     if (!token) {
@@ -70,89 +59,112 @@ export const MainView = () => {
     // Only re-run this effect if the token changes
   }, [token]);
 
-  // Render a loading indicator
-  const LoadingIndicator = () => {
-    return <div>Loading...</div>;
-  };
-
   return (
-    <Row className="my-4 justify-content-md-center">
-      {!user ? (
-        // If the user is not logged in, render the login and signup buttons
-        <Col md={5}>
-          <Row className="my-4 justify-content-md-center">
-            <Col xs="auto">
-              <Button onClick={toggleLoginModal} variant="primary">
-                Login
-              </Button>
-            </Col>
-          </Row>
-          <Row className="my-4 justify-content-md-center">
-            <Col xs="auto">or</Col>
-          </Row>
-          <Row className="my-4 justify-content-md-center">
-            <Col xs="auto">
-              <Button onClick={toggleSignupModal} variant="primary">
-                Signup
-              </Button>
-            </Col>
-          </Row>
-          {/* If the loginModalOpen or signupModalOpen flag is true, render the LoginView or SignupView component */}
-          {loginModalOpen && (
-            <LoginView
-              onLoggedIn={(user, token) => {
-                setUser(user);
-                setToken(token);
-              }}
-              setLoading={setLoading}
-            />
-          )}
-          {signupModalOpen && <SignupView />}
-        </Col>
-      ) : loading ? (
-        // If the user is logged in and the data is still loading, render the LoadingIndicator
-        <LoadingIndicator />
-      ) : movies.length === 0 ? (
-        // If the user is logged in, the data is finished loading, and the movies array is empty, render a message saying the list is empty
-        <div>The list is empty!</div>
-      ) : //If a movie has been selected, render the MovieView component
-      selectedMovie ? (
-        <Col md={8}>
-          <MovieView
-            movie={selectedMovie}
-            onBackClick={() => setSelectedMovie(null)}
+    <BrowserRouter>
+      <NavigationBar
+        user={user}
+        onLoggedOut={() => {
+          setUser(null);
+        }}
+      />
+      <Row className="justify-content-md-center">
+        <Routes>
+          {/* renders the SignupView component if the user is not logged in, otherwise redirects to root path */}
+          <Route
+            path="/signup"
+            element={
+              <>
+                {user ? (
+                  <Navigate to="/" />
+                ) : (
+                  <Col md={5}>
+                    <SignupView />
+                  </Col>
+                )}
+              </>
+            }
           />
-        </Col>
-      ) : (
-        //If none of the above conditions are met, render the movie cards and a logout button
-        <>
-          {movies.map((movie) => (
-            <Col className="mb-5" key={movie.id} md={3}>
-              <MovieCard
-                key={movie._id}
-                movie={movie}
-                onMovieClick={(newSelectedMovie) => {
-                  setSelectedMovie(newSelectedMovie);
-                }}
-              />
-            </Col>
-          ))}
-          <Row className="justify-content-center">
-            <Col xs="auto">
-              <button
-                onClick={() => {
-                  setUser(null);
-                  setToken(null);
-                  localStorage.clear();
-                }}
-                className="btn btn-primary"
-              >
-                Logout
-              </button>
-            </Col>
-          </Row>
-        </>
-      )}
-    </Row>
+          {/* renders the LoginView component if the user is not logged in, otherwise redirects to root path. onLoggedIn prop is a function that sets the user and token when called. setLoading prop is a function that sets the loading state */}
+          <Route
+            path="/login"
+            element={
+              <>
+                {user ? (
+                  <Navigate to="/" />
+                ) : (
+                  <Col md={5}>
+                    <LoginView
+                      onLoggedIn={(user, token) => {
+                        setUser(user);
+                        setToken(token);
+                      }}
+                      setLoading={setLoading}
+                    />
+                  </Col>
+                )}
+              </>
+            }
+          />
+          {/* renders the MovieView component if the user is logged in and the loading state is false, otherwise redirects to the /login path or displays a message */}
+          <Route
+            path="/movies/:movieId"
+            element={
+              <>
+                {!user ? (
+                  <Navigate to="/login" replace />
+                ) : loading ? (
+                  <div>Loading...</div>
+                ) : movies.length === 0 ? (
+                  <Col>The list is empty!</Col>
+                ) : (
+                  <Col md={8}>
+                    <MovieView movies={movies} />
+                  </Col>
+                )}
+              </>
+            }
+          />
+          {/* renders movie cards if the user is logged in and the loading state is false, otherwise redirects to the /login path or displays a message */}
+          <Route
+            path="/"
+            element={
+              <>
+                {!user ? (
+                  <Navigate to="/login" replace />
+                ) : loading ? (
+                  <div>Loading...</div>
+                ) : movies.length === 0 ? (
+                  <Col>The list is empty!</Col>
+                ) : (
+                  <>
+                    {movies.map((movie) => (
+                      <Col className="mb-4" md={3} key={movie.id}>
+                        <MovieCard movie={movie} />
+                      </Col>
+                    ))}
+                  </>
+                )}
+              </>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <>
+                {/* Use a guard to only allow logged-in users to access the profile view */}
+                {user ? (
+                  <Col md={5}>
+                    {/* Pass the user object as a prop to the ProfileView component */}
+                    <ProfileView user={user} token={token} />
+                  </Col>
+                ) : (
+                  <Navigate to="/login" />
+                )}
+              </>
+            }
+          />
+        </Routes>
+      </Row>
+    </BrowserRouter>
   );
 };
