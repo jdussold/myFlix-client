@@ -3,11 +3,12 @@ import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 
 export const SignupView = () => {
-  // Declare state variables for the form inputs
+  // Declare state variables for the form inputs and the token
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [birthday, setBirthday] = useState("");
+  const [token, setToken] = useState("");
 
   // Event handler for when the form is submitted
   const handleSubmit = (event) => {
@@ -30,14 +31,34 @@ export const SignupView = () => {
         "Content-Type": "application/json",
       },
     }).then((response) => {
-      // If the request was successful, show an alert and reload the page
+      // If the request was successful, log the user in
       if (response.ok) {
-        alert("Signup successful");
-        window.location.reload();
-      }
-      // If the request failed, show an alert
-      else {
-        alert("Signup failed");
+        // Send a request to the /login endpoint with the user's credentials
+        fetch("https://my-flix-db-jd.herokuapp.com/login", {
+          method: "POST",
+          body: JSON.stringify({
+            Username: username,
+            Password: password,
+          }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }).then((response) => {
+          // If the request was successful, store the token in local storage and update the component's state
+          if (response.ok) {
+            alert("Signup and login successful");
+            response.json().then((data) => {
+              localStorage.setItem("token", data.token);
+              setToken(data.token);
+            });
+            // Redirect the user to the movies page
+            window.location.reload();
+          }
+          // If the request failed, show an alert
+          else {
+            alert("Signup failed");
+          }
+        });
       }
     });
   };
