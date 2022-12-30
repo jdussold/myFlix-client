@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 
-export const SignupView = () => {
+export const SignupView = ({ onLoggedIn }) => {
   // Declare state variables for the form inputs and the token
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -50,6 +50,8 @@ export const SignupView = () => {
             response.json().then((data) => {
               localStorage.setItem("token", data.token);
               setToken(data.token);
+              // Call the "onLoggedIn" function passed in as a prop from the MainView component, passing in the user and token data
+              onLoggedIn(data.user, data.token);
             });
             // Redirect the user to the movies page
             window.location.reload();
