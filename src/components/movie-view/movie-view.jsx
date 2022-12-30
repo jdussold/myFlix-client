@@ -1,45 +1,36 @@
-import "./movie-view.scss"; // Import the styles for the component
+import { useParams } from "react-router";
+import { Link } from "react-router-dom";
+import "./movie-view.scss";
 
-// Define the MovieView component
-export const MovieView = ({ movie, onBackClick }) => {
-  // Destructure the movie object to get the image, title, description, genre, and director
-  const { image, title, description, genre, director } = movie;
+export const MovieView = ({ movies }) => {
+  const { movieId } = useParams();
 
-  // Return the JSX that will be rendered for this component
+  const movie = movies.find((m) => m.id === movieId);
+
   return (
     <div>
-      {/* Render the movie image */}
       <div>
-        <img src={image} className="img-fluid w-50 d-block mx-auto" />
+        <img className="img-fluid w-50 d-block mx-auto" src={movie.image} />
       </div>
-      {/* Render the title */}
       <div>
         <span>Title: </span>
-        <span>{title}</span>
+        <span>{movie.title}</span>
       </div>
-      {/* Render the description */}
-      <div>
-        <span>Description: </span>
-        <span>{description}</span>
-      </div>
-      {/* Render the genre */}
-      <div>
-        <span>Genre: </span>
-        <span>{genre}</span>
-      </div>
-      {/* Render the director */}
       <div>
         <span>Director: </span>
-        <span>{director}</span>
+        <span>{movie.director}</span>
       </div>
-      {/* Render the back button with a click event handler */}
-      <button
-        onClick={onBackClick}
-        className="back-button"
-        style={{ cursor: "pointer" }}
-      >
-        Back
-      </button>
+      <div>
+        <span>Description: </span>
+        <span>{movie.description}</span>
+      </div>
+      <div>
+        <span>Genre: </span>
+        <span>{movie.genre}</span>
+      </div>
+      <Link to={`/`}>
+        <button className="back-button">Back</button>
+      </Link>
     </div>
   );
 };
