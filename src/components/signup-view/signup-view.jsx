@@ -43,24 +43,26 @@ export const SignupView = ({ onLoggedIn }) => {
           headers: {
             "Content-Type": "application/json",
           },
-        }).then((response) => {
-          // If the request was successful, store the token in local storage and update the component's state
-          if (response.ok) {
-            alert("Signup and login successful");
-            response.json().then((data) => {
-              localStorage.setItem("token", data.token);
-              setToken(data.token);
-              // Call the "onLoggedIn" function passed in as a prop from the MainView component, passing in the user and token data
-              onLoggedIn(data.user, data.token);
-            });
-            // Redirect the user to the movies page
-            window.location.reload();
-          }
-          // If the request failed, show an alert
-          else {
-            alert("Signup failed");
-          }
-        });
+        })
+          .then((response) => {
+            // If the request was successful, store the token in local storage and update the component's state
+            if (response.ok) {
+              alert("Signup and login successful");
+              response.json().then((data) => {
+                localStorage.setItem("token", data.token);
+                setToken(data.token);
+                // Call the "onLoggedIn" function passed in as a prop from the MainView component, passing in the user and token data
+                onLoggedIn(data.user, data.token);
+              });
+            }
+            // If the request failed, show an alert
+            else {
+              alert("Signup failed");
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+          });
       }
     });
   };
