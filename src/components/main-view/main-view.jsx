@@ -78,12 +78,18 @@ export const MainView = () => {
                   <Navigate to="/" />
                 ) : (
                   <Col md={5}>
-                    <SignupView />
+                    <SignupView
+                      onLoggedIn={(user, token) => {
+                        setUser(user);
+                        setToken(token);
+                      }}
+                    />
                   </Col>
                 )}
               </>
             }
           />
+
           {/* renders the LoginView component if the user is not logged in, otherwise redirects to root path. onLoggedIn prop is a function that sets the user and token when called. setLoading prop is a function that sets the loading state */}
           <Route
             path="/login"
