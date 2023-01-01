@@ -18,7 +18,7 @@ export const ProfileView = () => {
 
     // Create an object with the form data
     const data = {
-      username: username,
+      Username: username,
       Password: password,
       Email: email,
       Birthday: birthday,
