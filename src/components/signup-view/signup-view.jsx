@@ -45,11 +45,12 @@ export const SignupView = ({ onLoggedIn }) => {
           },
         })
           .then((response) => {
-            // If the request was successful, store the token in local storage and update the component's state
+            // If the request was successful, store the token and user data in local storage and update the component's state
             if (response.ok) {
               alert("Signup and login successful");
               response.json().then((data) => {
                 localStorage.setItem("token", data.token);
+                localStorage.setItem("user", JSON.stringify(data.user));
                 setToken(data.token);
                 // Call the "onLoggedIn" function passed in as a prop from the MainView component, passing in the user and token data
                 onLoggedIn(data.user, data.token);
