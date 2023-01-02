@@ -25,35 +25,22 @@ export const ProfileView = () => {
     };
 
     // Send a PUT request to the server with the updated form data
-    fetch(`https://my-flix-db-jd.herokuapp.com/users/${username}`, {
-      method: "PUT",
-      body: JSON.stringify(data),
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    }).then((response) => {
+    fetch(
+      `https://my-flix-db-jd.herokuapp.com/users/${
+        JSON.parse(localStorage.getItem("user")).Username
+      }`,
+      {
+        method: "PUT",
+        body: JSON.stringify(data),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    ).then((response) => {
       // If the request was successful
       if (response.ok) {
         // Send a request to the server to generate a new token for the user
-        fetch(
-          `https://my-flix-db-jd.herokuapp.com/users/${username}/generate-new-token`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        ).then((response) => {
-          // If the request was successful, store the new token in local storage
-          if (response.ok) {
-            response.json().then((data) => {
-              console.log("New token: ", data.newToken);
-              localStorage.setItem("token", data.newToken);
-            });
-          }
-        });
         alert("Profile update successful");
         setUsername(username);
         setPassword(password);
