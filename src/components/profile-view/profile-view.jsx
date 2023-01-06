@@ -49,6 +49,7 @@ export const ProfileView = () => {
   };
 
   // Event handler for when the "Confirm" button in the modal is clicked
+  // Event handler for when the "Confirm" button in the modal is clicked
   const handleModalConfirm = () => {
     // Send a request to the server to check if the entered password is correct
     fetch("https://my-flix-db-jd.herokuapp.com/verify-password", {
@@ -61,72 +62,83 @@ export const ProfileView = () => {
         password: modalPassword,
       }),
     })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
+      .then((response) => {
+        // If the request was successful
+        if (response.ok) {
           // passwords match
+          // If the passwords match, create an object with the form data
+          console.log(
+            `formPassword value is currently set to: ${formPassword}`
+          );
+          let data;
+          if (formPassword === "********") {
+            // If the password has not been updated from the default value, send an empty string as the password in the PUT request
+            data = {
+              Username: username,
+              Password: "",
+              Email: email,
+              Birthday: birthday,
+            };
+          } else {
+            // If the password has been updated, send the updated password in the PUT request
+            data = {
+              Username: username,
+              Password: formPassword,
+              Email: email,
+              Birthday: birthday,
+            };
+          }
+          console.log(`Sending password: ${password}`);
+
+          // Send a PUT request to the server with the updated form data
+          fetch(
+            `https://my-flix-db-jd.herokuapp.com/users/${
+              JSON.parse(localStorage.getItem("user")).Username
+            }`,
+            {
+              method: "PUT",
+              body: JSON.stringify(data),
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            }
+          ).then((response) => {
+            // If the request was successful
+            if (response.ok) {
+              alert(
+                "Profile update successful. Please logout and log back in to see the updated information."
+              );
+              setUsername(username);
+              setPassword(password);
+              setEmail(email);
+              setBirthday(birthday);
+              setUpdateSuccess(true);
+              setDisplayForm(false);
+              setShowModal(false); // Hide the modal
+            }
+            // If the request failed, show an alert
+            else {
+              alert(
+                "There was an error updating your profile. Please try again."
+              );
+              setUpdateSuccess(false);
+            }
+          });
         } else {
           // passwords do not match
           alert("The password entered is incorrect. Please try again.");
           return;
         }
-      });
-
-    // If the passwords match, create an object with the form data
-    console.log(`formPassword value is currently set to: ${formPassword}`);
-    let data;
-    if (formPassword === "********") {
-      // If the password has not been updated from the default value, send an empty string as the password in the PUT request
-      data = {
-        Username: username,
-        Password: "",
-        Email: email,
-        Birthday: birthday,
-      };
-    } else {
-      // If the password has been updated, send the updated password in the PUT request
-      data = {
-        Username: username,
-        Password: formPassword,
-        Email: email,
-        Birthday: birthday,
-      };
-    }
-    console.log(`Sending password: ${password}`);
-
-    // Send a PUT request to the server with the updated form data
-    fetch(
-      `https://my-flix-db-jd.herokuapp.com/users/${
-        JSON.parse(localStorage.getItem("user")).Username
-      }`,
-      {
-        method: "PUT",
-        body: JSON.stringify(data),
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      }
-    ).then((response) => {
-      // If the request was successful
-      if (response.ok) {
+      })
+      .catch((error) => {
+        // There was an error in the request or the response was not 2xx
+        console.error(error);
         alert(
-          "Profile update successful. Please logout and log back in to see the updated information."
+          "An error occurred while verifying the password. Please try again."
         );
-        setUsername(username);
-        setPassword(password);
-        setEmail(email);
-        setBirthday(birthday);
-        setUpdateSuccess(true);
-        setDisplayForm(false);
-        setShowModal(false); // Hide the modal
-      }
-      // If the request failed, show an alert
-      else {
-        alert("There was an error updating your profile. Please try again.");
-        setUpdateSuccess(false);
-      }
-    });
+        return;
+      });
   };
 
   // Render the form or the current user information
