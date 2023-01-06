@@ -128,6 +128,7 @@ export const ProfileView = () => {
         } else {
           // passwords do not match
           alert("The password entered is incorrect. Please try again.");
+          setShowModal(false);
           return;
         }
       })
@@ -137,6 +138,7 @@ export const ProfileView = () => {
         alert(
           "An error occurred while verifying the password. Please try again."
         );
+        setShowModal(false);
         return;
       });
   };
