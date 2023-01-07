@@ -9,11 +9,12 @@ export const ProfileView = () => {
   const [birthday, setBirthday] = useState("");
   const [displayForm, setDisplayForm] = useState(false);
   const [updateSuccess, setUpdateSuccess] = useState(false);
-  const [passwordToUse, setPasswordToUse] = useState("");
   const [formPassword, setFormPassword] = useState("********");
   // Declare state variables for the modal
   const [showModal, setShowModal] = useState(false);
   const [modalPassword, setModalPassword] = useState("");
+  // Declare a state variable to store whether the "Delete Account" button has been clicked
+  const [deleteClicked, setDeleteClicked] = useState(false);
 
   // Use effect hook to retrieve the current user's information from localStorage
   useEffect(() => {
@@ -30,25 +31,25 @@ export const ProfileView = () => {
 
   // Event handler for when the form is submitted
   const handleSubmit = (event) => {
+    console.log("handleSubmit called, deleteClicked:", deleteClicked);
     // Prevent the default refresh
     event.preventDefault();
 
-    // Check if any of the form values have been changed from their default values
+    // Check if any of the form values have been changed from their default values or if the "Delete Account" button has been clicked
     if (
       username !== JSON.parse(localStorage.getItem("user")).Username ||
       formPassword !== "********" ||
       email !== JSON.parse(localStorage.getItem("user")).Email ||
-      birthday !== JSON.parse(localStorage.getItem("user")).Birthday
+      birthday !== JSON.parse(localStorage.getItem("user")).Birthday ||
+      deleteClicked
     ) {
-      // If any of the form values have been changed, show the modal to confirm the changes
+      // If any of the form values have been changed or the "Delete Account" button has been clicked, show the modal to confirm the changes
       setShowModal(true);
     } else {
       // If none of the form values have been changed, show an alert
       alert("No changes have been made");
     }
   };
-
-  // Event handler for when the "Confirm" button in the modal is clicked
   // Event handler for when the "Confirm" button in the modal is clicked
   const handleModalConfirm = () => {
     // Send a request to the server to check if the entered password is correct
@@ -63,70 +64,100 @@ export const ProfileView = () => {
       }),
     })
       .then((response) => {
-        // If the request was successful
+        // If the request was successful and the entered password is correct
         if (response.ok) {
-          // passwords match
-          // If the passwords match, create an object with the form data
-          console.log(
-            `formPassword value is currently set to: ${formPassword}`
-          );
-          let data;
-          if (formPassword === "********") {
-            // If the password has not been updated from the default value, send an empty string as the password in the PUT request
-            data = {
-              Username: username,
-              Password: "",
-              Email: email,
-              Birthday: birthday,
-            };
+          // If the "Delete Account" button has been clicked, send a DELETE request to delete the user's account
+          if (deleteClicked) {
+            fetch(
+              `https://my-flix-db-jd.herokuapp.com/users/${
+                JSON.parse(localStorage.getItem("user")).Username
+              }`,
+              {
+                method: "DELETE",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+              }
+            )
+              .then((response) => {
+                // If the DELETE request was successful, log the user out and remove their information from localStorage
+                if (response.ok) {
+                  setShowModal(false);
+                  alert("Your account has been deleted");
+                  localStorage.removeItem("token");
+                  localStorage.removeItem("user");
+                  window.location = "/login";
+                } else {
+                  alert("An error occurred while deleting your account");
+                }
+              })
+              .catch((error) => {
+                console.error(error);
+                alert("An error occurred while deleting your account");
+              });
           } else {
-            // If the password has been updated, send the updated password in the PUT request
-            data = {
-              Username: username,
-              Password: formPassword,
-              Email: email,
-              Birthday: birthday,
-            };
-          }
-          console.log(`Sending password: ${password}`);
+            // If the "Delete Account" button has not been clicked, create an object with the form data
+            let data;
+            if (formPassword === "********") {
+              // If the password has not been updated from the default value, send an empty string as the password in the PUT request
+              data = {
+                Username: username,
+                Password: "",
+                Email: email,
+                Birthday: birthday,
+              };
+            } else {
+              // If the password has been updated, send the new password in the PUT request
+              data = {
+                Username: username,
+                Password: formPassword,
+                Email: email,
+                Birthday: birthday,
+              };
+            }
 
-          // Send a PUT request to the server with the updated form data
-          fetch(
-            `https://my-flix-db-jd.herokuapp.com/users/${
-              JSON.parse(localStorage.getItem("user")).Username
-            }`,
-            {
-              method: "PUT",
-              body: JSON.stringify(data),
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-              },
-            }
-          ).then((response) => {
-            // If the request was successful
-            if (response.ok) {
-              alert(
-                "Profile update successful. Please logout and log back in to see the updated information."
-              );
-              setUsername(username);
-              setPassword(password);
-              setEmail(email);
-              setBirthday(birthday);
-              setUpdateSuccess(true);
-              setDisplayForm(false);
-              setShowModal(false); // Hide the modal
-            }
-            // If the request failed, show an alert
-            else {
-              alert(
-                "There was an error updating your profile. Please try again."
-              );
-              setUpdateSuccess(false);
-            }
-          });
+            // Send a PUT request to the server with the updated form data to update the users information
+            fetch(
+              `https://my-flix-db-jd.herokuapp.com/users/${
+                JSON.parse(localStorage.getItem("user")).Username
+              }`,
+              {
+                method: "PUT",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+                body: JSON.stringify(data),
+              }
+            )
+              .then((response) => {
+                // If the request was successful
+                if (response.ok) {
+                  alert(
+                    "Profile update successful. Please logout and log back in to see the updated information."
+                  );
+                  setUsername(username);
+                  setPassword(password);
+                  setEmail(email);
+                  setBirthday(birthday);
+                  setUpdateSuccess(true);
+                  setDisplayForm(false);
+                  setShowModal(false); // Hide the modal
+                } else {
+                  // If the request failed, show an alert
+                  alert("An error occurred while updating your profile");
+                  setUpdateSuccess(false);
+                }
+              })
+              .catch((error) => {
+                console.error(error);
+                alert("An error occurred while updating your profile");
+                setUpdateSuccess(false);
+              });
+          }
         } else {
-          // passwords do not match
+          // If the entered password is incorrect, show an alert
           alert("The password entered is incorrect. Please try again.");
           setShowModal(false);
           return;
@@ -160,13 +191,30 @@ export const ProfileView = () => {
       <Row>
         <Col md={6} style={{ marginTop: "20px" }}>
           {/* Add a button that allows the user to toggle the form */}
-          <Button
-            onClick={() => setDisplayForm(!displayForm)}
-            style={{ marginRight: "auto", marginBottom: "10px" }}
-          >
-            {displayForm ? "Cancel" : "Edit Profile"}
-          </Button>
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <Button
+              onClick={() => setDisplayForm(!displayForm)}
+              style={{ marginRight: "auto", marginBottom: "10px" }}
+            >
+              {displayForm ? "Cancel" : "Edit Profile"}
+            </Button>
+            {displayForm && (
+              <Button
+                type="submit"
+                variant="danger"
+                onClick={(e) => {
+                  console.log("Delete Account button clicked");
+                  setDeleteClicked(true);
+                  handleSubmit(e);
+                }}
+                style={{ marginRight: "auto", marginBottom: "10px" }}
+              >
+                Delete Account
+              </Button>
+            )}
+          </div>
         </Col>
+
         {displayForm ? (
           <Col md={6} style={{ marginTop: "20px" }}>
             <Form onSubmit={handleSubmit}>
@@ -200,6 +248,16 @@ export const ProfileView = () => {
                   required
                 />
               </Form.Group>
+
+              <Form.Group controlId="formBirthday">
+                <Form.Label>Birthday:</Form.Label>
+                <Form.Control
+                  type="date"
+                  value={birthday}
+                  onChange={(e) => setBirthday(e.target.value)}
+                />
+              </Form.Group>
+
               <Modal show={showModal} onHide={() => setShowModal(false)}>
                 <Modal.Header closeButton>
                   <Modal.Title>Confirm Changes</Modal.Title>
@@ -225,15 +283,6 @@ export const ProfileView = () => {
                   </Button>
                 </Modal.Footer>
               </Modal>
-
-              <Form.Group controlId="formBirthday">
-                <Form.Label>Birthday:</Form.Label>
-                <Form.Control
-                  type="date"
-                  value={birthday}
-                  onChange={(e) => setBirthday(e.target.value)}
-                />
-              </Form.Group>
 
               <Button className="my-4" variant="primary" type="submit">
                 Update Profile
