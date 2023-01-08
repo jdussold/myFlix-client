@@ -16,6 +16,8 @@ export const ProfileView = () => {
   // Declare a state variable to store whether the "Delete Account" button has been clicked
   const [deleteClicked, setDeleteClicked] = useState(false);
 
+
+  const [favouriteMovies, setFavouriteMovies] = useState([]);
   // Use effect hook to retrieve the current user's information from localStorage
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
@@ -26,8 +28,26 @@ export const ProfileView = () => {
       // Parse the birthday string and format it as yyyy-MM-dd
       const date = new Date(user.Birthday);
       setBirthday(date.toISOString().substring(0, 10));
+
+      getUserFavoriteMovies(user)
     }
   }, []); // The empty array ensures that this effect only runs on mount
+
+  const getUserFavoriteMovies = (user) => {
+    fetch("https://my-flix-db-jd.herokuapp.com/movies", {
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+    })
+      .then((response) => response.json()) // Convert the response to JSON
+      .then((data) => {
+        setFavouriteMovies(data.filter(movie => user.FavoriteMovies.includes(movie._id)))
+      })
+      .catch((error) => {
+        // Display an alert if there is an error
+        window.alert("An error occurred: " + error);
+        // Set loading to false if there is an error
+        setLoading(false);
+      });
+  }
 
   // Event handler for when the form is submitted
   const handleSubmit = (event) => {
@@ -174,6 +194,8 @@ export const ProfileView = () => {
       });
   };
 
+
+
   // Render the form or the current user information
   return (
     <div>
@@ -317,6 +339,9 @@ export const ProfileView = () => {
                     .substring(0, 10)}
                 </span>
               </p>
+              <div>
+                {favouriteMovies.map(fMovie => <div key={fMovie._id}>{fMovie.Title}</div>)}
+              </div>
             </Col>
           </>
         )}
