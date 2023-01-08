@@ -4,7 +4,6 @@ import PropTypes from "prop-types";
 // Import the Button and Card components from the react-bootstrap library
 import { Button, Card } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { FontAwesomeIcon } from "react-fontawesome";
 
 //The MovieCard Function Component
 // The component returns a Card element with an image, title, director, and a button
@@ -28,7 +27,7 @@ export const MovieCard = ({ movie }) => {
       .then((response) => response.json())
       .then((data) => {
         setFavoriteMovies(data.FavoriteMovies);
-        setIsFavorite(favoriteMovies.includes(movie.id));
+        setIsFavorite(data.FavoriteMovies.includes(movie.id));
       })
       .catch((error) => {
         console.error(error);
