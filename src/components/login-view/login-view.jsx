@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
+import { useNavigate, redirect } from "react-router-dom";
 
 export const LoginView = ({ onLoggedIn, setLoading }) => {
+  const navigate = useNavigate()
+
   // Declare a state variable called "username" and a function to update it
   const [username, setUsername] = useState("");
   // Declare a state variable called "password" and a function to update it
@@ -32,9 +35,11 @@ export const LoginView = ({ onLoggedIn, setLoading }) => {
         console.log("Login response: ", data);
         // If the server returns a user object, store the user and token in local storage and call the "onLoggedIn" function
         if (data.user) {
+          // You shouldnt store the user information or fetch from localStorage. You should always ask the server
           localStorage.setItem("user", JSON.stringify(data.user));
           localStorage.setItem("token", data.token);
           onLoggedIn(data.user, data.token);
+          navigate("/")
         } else {
           alert("No such user");
         }
@@ -69,6 +74,9 @@ export const LoginView = ({ onLoggedIn, setLoading }) => {
       </Form.Group>
       <Button className="my-4" variant="primary" type="submit">
         Submit
+      </Button>
+      <Button className="my-4" onClick={() => navigate("/register")} variant="primary">
+        Register
       </Button>
     </Form>
   );

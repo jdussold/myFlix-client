@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
+import { useNavigate } from "react-router-dom";
 
 export const SignupView = () => {
+  const navigate = useNavigate()
+
   // Declare state variables for the form inputs
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -33,7 +36,7 @@ export const SignupView = () => {
       // If the request was successful, show an alert and reload the page
       if (response.ok) {
         alert("Signup successful");
-        window.location.reload();
+        navigate("/login") //Read more here https://reactrouter.com/en/main/fetch/redirect
       }
       // If the request failed, show an alert
       else {
@@ -89,6 +92,11 @@ export const SignupView = () => {
       <Button className="my-4" variant="primary" type="submit">
         Submit
       </Button>
+
+      <Button className="my-4" variant="primary" onClick={()=> navigate("/login")}>
+        Login
+      </Button>
+
     </Form>
   );
 };

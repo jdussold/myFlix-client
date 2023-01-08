@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { MovieCard } from "../movie-card/movie-card";
+import {ProtectedViewWrapper} from "../protected-view-wrapper/protected-view-wrapper"
 import { MovieView } from "../movie-view/movie-view";
 import { LoginView } from "../login-view/login-view";
 import { SignupView } from "../signup-view/signup-view";
@@ -15,28 +17,16 @@ export const MainView = () => {
   // Set initial values for user and token using stored data, or null if not available
   const [user, setUser] = useState(storedUser ? storedUser : null);
   const [token, setToken] = useState(storedToken ? storedToken : null);
-  const [loading, setLoading] = useState(true);
-  const [selectedMovie, setSelectedMovie] = useState(null);
-  const [signupModalOpen, setSignupModalOpen] = useState(false);
-  const [loginModalOpen, setLoginModalOpen] = useState(false);
-
-  // Define toggleSignupModal function to open the signup modal and close the login modal
-  const toggleSignupModal = () => {
-    setSignupModalOpen(true);
-    setLoginModalOpen(false);
-  };
-
-  // Define toggleLoginModal function to open the login modal and close the signup modal
-  const toggleLoginModal = () => {
-    setLoginModalOpen(true);
-    setSignupModalOpen(false);
-  };
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     // If there is no token, return early
     if (!token) {
       return;
     }
+
+    // Set loading to true once the data has been fetched
+    setLoading(true);
 
     // Fetch movie data when authorized
     fetch("https://my-flix-db-jd.herokuapp.com/movies", {
@@ -71,13 +61,69 @@ export const MainView = () => {
   }, [token]);
 
   // Render a loading indicator
-  const LoadingIndicator = () => {
+  if(loading){
     return <div>Loading...</div>;
   };
 
   return (
+    <BrowserRouter>
     <Row className="my-4 justify-content-md-center">
-      {!user ? (
+    <Routes>
+      <Route path="/login" element={ <LoginView
+              onLoggedIn={(user, token) => {
+                setUser(user);
+                setToken(token);
+              }}
+              setLoading={setLoading}
+            />} />
+
+      <Route path="/register" element={<SignupView />}/>
+      <Route path="/movies/:movieTitle" element={<MovieView />} />
+      <Route path="/" element={
+        //ProtectedViewWrapper redirects to login screen if user is null or undefined
+        <ProtectedViewWrapper user={user}>
+          {movies.length === 0 ? (
+                    <div className="main-view">The list is empty</div>
+                  ) : (
+                    <>
+          {movies.map((movie) => (
+              <Col className="mb-5" key={movie.id} md={3}>
+                <MovieCard
+                  movie={movie}
+                />
+              </Col>
+            ))}
+            </>)
+        }
+      </ProtectedViewWrapper>
+      }/>
+      {/* If the user requesting route doesnt match any of the about it will show 4040 */}
+      <Route path="*" element={<div>404 Page not found</div>} />
+      </Routes>
+    </Row>
+    </BrowserRouter>
+  );
+};
+
+
+/**
+ * 
+ * const [selectedMovie, setSelectedMovie] = useState(null);
+  const [signupModalOpen, setSignupModalOpen] = useState(false);
+  const [loginModalOpen, setLoginModalOpen] = useState(false);
+
+  // Define toggleSignupModal function to open the signup modal and close the login modal
+  const toggleSignupModal = () => {
+    setSignupModalOpen(true);
+    setLoginModalOpen(false);
+  };
+
+  // Define toggleLoginModal function to open the login modal and close the signup modal
+  const toggleLoginModal = () => {
+    setLoginModalOpen(true);
+    setSignupModalOpen(false);
+  };
+ * {!user ? (
         // If the user is not logged in, render the login and signup buttons
         <Col md={5}>
           <Row className="my-4 justify-content-md-center">
@@ -97,7 +143,7 @@ export const MainView = () => {
               </Button>
             </Col>
           </Row>
-          {/* If the loginModalOpen or signupModalOpen flag is true, render the LoginView or SignupView component */}
+          {/* If the loginModalOpen or signupModalOpen flag is true, render the LoginView or SignupView component 
           {loginModalOpen && (
             <LoginView
               onLoggedIn={(user, token) => {
@@ -153,6 +199,4 @@ export const MainView = () => {
           </Row>
         </>
       )}
-    </Row>
-  );
-};
+ */
