@@ -44,8 +44,6 @@ export const ProfileView = () => {
       .catch((error) => {
         // Display an alert if there is an error
         window.alert("An error occurred: " + error);
-        // Set loading to false if there is an error
-        setLoading(false);
       });
   }
 
