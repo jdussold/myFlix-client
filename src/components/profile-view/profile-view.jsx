@@ -18,15 +18,46 @@ export const ProfileView = () => {
   const [deleteClicked, setDeleteClicked] = useState(false);
   const [favoriteMovies, setFavoriteMovies] = useState([]);
   const user = JSON.parse(localStorage.getItem("user"));
+
   // Use effect hook to retrieve the current user's information from localStorage
   useEffect(() => {
     if (user) {
       getUser(user.Username)
-      getUserFavoriteMovies(user);
+      getUserFavoriteMovies(user.FavoriteMovies);
     }
   }, []); // The empty array ensures that this effect only runs on mount
 
-  const getUserFavoriteMovies = (user) => {
+    // set User data from server
+  const setUser = (user) => {
+      setUsername(user.Username);
+      setPassword(user.Password);
+      setEmail(user.Email);
+      // Parse the birthday string and format it as yyyy-MM-dd
+      const date = new Date(user.Birthday);
+      setBirthday(date.toISOString().substring(0, 10));
+    }
+    
+    // Fetch user from server
+    const getUser = (username) => {
+      fetch(`https://my-flix-db-jd.herokuapp.com/users/${username}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          }
+        }
+      )
+      .then((res) => res.json()) 
+        .then((response) => {
+          // If the request was successful
+          setUser(response)
+        })
+        .catch((error) => {
+          alert("An error occurred while fetching your profile");
+        });
+    }
+
+  const getUserFavoriteMovies = (favoriteMovies) => {
     fetch("https://my-flix-db-jd.herokuapp.com/movies", {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
     })
@@ -45,7 +76,7 @@ export const ProfileView = () => {
         });
         // Filter the movies to get only the movies that are favorited by the current user
         const userFavoriteMovies = moviesFromApi.filter((movie) =>
-          user.FavoriteMovies.includes(movie.id)
+          favoriteMovies.includes(movie.id)
         );
         // Update the favoriteMovies state with the user's favorite movies
         setFavoriteMovies(userFavoriteMovies);
@@ -92,7 +123,6 @@ export const ProfileView = () => {
     })
     .then((res) => res.json() )
     .then((response) => {
-      console.log(response)
           // If the "Delete Account" button has been clicked, send a DELETE request to delete the user's account
           if (deleteClicked) {
             fetch(
@@ -107,17 +137,14 @@ export const ProfileView = () => {
                 },
               }
             )
-              .then((response) => {
+            .then((res) => res.json() )
+            .then((response) => {
                 // If the DELETE request was successful, log the user out and remove their information from localStorage
-                if (response.ok) {
                   setShowModal(false);
                   alert("Your account has been deleted");
                   localStorage.removeItem("token");
                   localStorage.removeItem("user");
                   window.location = "/login";
-                } else {
-                  alert("An error occurred while deleting your account");
-                }
               })
               .catch((error) => {
                 console.error(error);
@@ -188,36 +215,6 @@ export const ProfileView = () => {
         return;
       });
   };
-
-  // set User data from server
-  const setUser = (user) => {
-    setUsername(user.Username);
-    setPassword(user.Password);
-    setEmail(user.Email);
-    // Parse the birthday string and format it as yyyy-MM-dd
-    const date = new Date(user.Birthday);
-    setBirthday(date.toISOString().substring(0, 10));
-  }
-  
-  // Fetch user from server
-  const getUser = (username) => {
-    fetch(`https://my-flix-db-jd.herokuapp.com/users/${username}`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        }
-      }
-    )
-    .then((res) => res.json()) 
-      .then((response) => {
-        // If the request was successful
-        setUser(response)
-      })
-      .catch((error) => {
-        alert("An error occurred while fetching your profile");
-      });
-  }
 
   // Render the form or the current user information
   return (
