@@ -359,7 +359,6 @@ export const ProfileView = () => {
             </Col>
             <div>
               <h2>Favorite Movies</h2>
-              {favoriteMovies.length > 0 && (
                 <Row>
                   {favoriteMovies.map((movie) => (
                     <Col md={2} key={movie.id}>
@@ -367,7 +366,6 @@ export const ProfileView = () => {
                     </Col>
                   ))}
                 </Row>
-              )}
             </div>
           </>
         )}
