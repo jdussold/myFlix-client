@@ -3,3 +3,12 @@ $color: steelblue;
 .my-flix {
   color: $color;
 }
+
+body {
+  background: linear-gradient(
+    45deg,
+    rgba(1, 7, 22, 1) 0%,
+    rgba(63, 152, 222, 1) 50%,
+    rgba(1, 7, 22, 1) 100%
+  );
+}
