@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Button, Form, Row, Col, Modal } from "react-bootstrap";
+import { MovieCard } from "../movie-card/movie-card";
 
 export const ProfileView = () => {
   // Declare state variables for the form inputs, the token, and the displayForm state
@@ -15,6 +16,7 @@ export const ProfileView = () => {
   const [modalPassword, setModalPassword] = useState("");
   // Declare a state variable to store whether the "Delete Account" button has been clicked
   const [deleteClicked, setDeleteClicked] = useState(false);
+  const [favoriteMovies, setFavoriteMovies] = useState([]);
 
   // Use effect hook to retrieve the current user's information from localStorage
   useEffect(() => {
@@ -26,8 +28,39 @@ export const ProfileView = () => {
       // Parse the birthday string and format it as yyyy-MM-dd
       const date = new Date(user.Birthday);
       setBirthday(date.toISOString().substring(0, 10));
+      getUserFavoriteMovies(user);
     }
   }, []); // The empty array ensures that this effect only runs on mount
+
+  const getUserFavoriteMovies = (user) => {
+    fetch("https://my-flix-db-jd.herokuapp.com/movies", {
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+    })
+      .then((response) => response.json()) // Convert the response to JSON
+      .then((data) => {
+        // Map the movie data from the API to a new format
+        const moviesFromApi = data.map((movie) => {
+          return {
+            id: movie._id,
+            title: movie.Title,
+            image: movie.ImagePath,
+            description: movie.Description,
+            genre: movie.Genre.Name,
+            director: movie.Director.Name,
+          };
+        });
+        // Filter the movies to get only the movies that are favorited by the current user
+        const userFavoriteMovies = moviesFromApi.filter((movie) =>
+          user.FavoriteMovies.includes(movie.id)
+        );
+        // Update the favoriteMovies state with the user's favorite movies
+        setFavoriteMovies(userFavoriteMovies);
+      })
+      .catch((error) => {
+        // Display an alert if there is an error
+        window.alert("An error occurred: " + error);
+      });
+  };
 
   // Event handler for when the form is submitted
   const handleSubmit = (event) => {
@@ -318,6 +351,17 @@ export const ProfileView = () => {
                 </span>
               </p>
             </Col>
+            <div>
+              {favoriteMovies.length > 0 && (
+                <Row>
+                  {favoriteMovies.map((movie) => (
+                    <Col key={movie.id}>
+                      <MovieCard movie={movie} />
+                    </Col>
+                  ))}
+                </Row>
+              )}
+            </div>
           </>
         )}
       </Row>
