@@ -362,7 +362,7 @@ export const ProfileView = () => {
               {favoriteMovies.length > 0 && (
                 <Row>
                   {favoriteMovies.map((movie) => (
-                    <Col mb={2} md={5} key={movie.id}>
+                    <Col md={2} key={movie.id}>
                       <MovieCard movie={movie} />
                     </Col>
                   ))}
