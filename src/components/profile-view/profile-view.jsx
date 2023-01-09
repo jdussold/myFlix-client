@@ -17,17 +17,11 @@ export const ProfileView = () => {
   // Declare a state variable to store whether the "Delete Account" button has been clicked
   const [deleteClicked, setDeleteClicked] = useState(false);
   const [favoriteMovies, setFavoriteMovies] = useState([]);
-
+  const user = JSON.parse(localStorage.getItem("user"));
   // Use effect hook to retrieve the current user's information from localStorage
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user"));
     if (user) {
-      setUsername(user.Username);
-      setPassword(user.Password);
-      setEmail(user.Email);
-      // Parse the birthday string and format it as yyyy-MM-dd
-      const date = new Date(user.Birthday);
-      setBirthday(date.toISOString().substring(0, 10));
+      getUser(user.Username)
       getUserFavoriteMovies(user);
     }
   }, []); // The empty array ensures that this effect only runs on mount
@@ -70,10 +64,10 @@ export const ProfileView = () => {
 
     // Check if any of the form values have been changed from their default values or if the "Delete Account" button has been clicked
     if (
-      username !== JSON.parse(localStorage.getItem("user")).Username ||
+      username !== user.Username ||
       formPassword !== "********" ||
-      email !== JSON.parse(localStorage.getItem("user")).Email ||
-      birthday !== JSON.parse(localStorage.getItem("user")).Birthday ||
+      email !== user.Email ||
+      birthday !== user.Birthday ||
       deleteClicked
     ) {
       // If any of the form values have been changed or the "Delete Account" button has been clicked, show the modal to confirm the changes
@@ -92,13 +86,13 @@ export const ProfileView = () => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        username: JSON.parse(localStorage.getItem("user")).Username,
+        username: user.Username,
         password: modalPassword,
       }),
     })
-      .then((response) => {
-        // If the request was successful and the entered password is correct
-        if (response.ok) {
+    .then((res) => res.json() )
+    .then((response) => {
+      console.log(response)
           // If the "Delete Account" button has been clicked, send a DELETE request to delete the user's account
           if (deleteClicked) {
             fetch(
@@ -152,9 +146,7 @@ export const ProfileView = () => {
 
             // Send a PUT request to the server with the updated form data to update the users information
             fetch(
-              `https://my-flix-db-jd.herokuapp.com/users/${
-                JSON.parse(localStorage.getItem("user")).Username
-              }`,
+              `https://my-flix-db-jd.herokuapp.com/users/${user.Username}`,
               {
                 method: "PUT",
                 headers: {
@@ -164,24 +156,20 @@ export const ProfileView = () => {
                 body: JSON.stringify(data),
               }
             )
+            .then((res) => res.json() )
               .then((response) => {
                 // If the request was successful
-                if (response.ok) {
+  
                   alert(
-                    "Profile update successful. Please logout and log back in to see the updated information."
+                    "Profile update successful"
                   );
-                  setUsername(username);
-                  setPassword(password);
-                  setEmail(email);
-                  setBirthday(birthday);
+                  //update state
+                  setUser(response)
+                  //update localStorage
+                  localStorage.setItem("user", JSON.stringify(response))
                   setUpdateSuccess(true);
                   setDisplayForm(false);
                   setShowModal(false); // Hide the modal
-                } else {
-                  // If the request failed, show an alert
-                  alert("An error occurred while updating your profile");
-                  setUpdateSuccess(false);
-                }
               })
               .catch((error) => {
                 console.error(error);
@@ -189,12 +177,6 @@ export const ProfileView = () => {
                 setUpdateSuccess(false);
               });
           }
-        } else {
-          // If the entered password is incorrect, show an alert
-          alert("The password entered is incorrect. Please try again.");
-          setShowModal(false);
-          return;
-        }
       })
       .catch((error) => {
         // There was an error in the request or the response was not 2xx
@@ -207,6 +189,36 @@ export const ProfileView = () => {
       });
   };
 
+  // set User data from server
+  const setUser = (user) => {
+    setUsername(user.Username);
+    setPassword(user.Password);
+    setEmail(user.Email);
+    // Parse the birthday string and format it as yyyy-MM-dd
+    const date = new Date(user.Birthday);
+    setBirthday(date.toISOString().substring(0, 10));
+  }
+  
+  // Fetch user from server
+  const getUser = (username) => {
+    fetch(`https://my-flix-db-jd.herokuapp.com/users/${username}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        }
+      }
+    )
+    .then((res) => res.json()) 
+      .then((response) => {
+        // If the request was successful
+        setUser(response)
+      })
+      .catch((error) => {
+        alert("An error occurred while fetching your profile");
+      });
+  }
+
   // Render the form or the current user information
   return (
     <div>
@@ -214,8 +226,7 @@ export const ProfileView = () => {
         <Row>
           <Col md={{ span: 12 }}>
             <p style={{ color: "red" }}>
-              Profile information has been recently updated. Please log out and
-              back in to see the updated information.
+              Profile information has been recently updated.
             </p>
           </Col>
         </Row>
@@ -329,7 +340,7 @@ export const ProfileView = () => {
               <p>
                 <strong>Username:</strong>{" "}
                 <span style={{ float: "right" }}>
-                  {JSON.parse(localStorage.getItem("user")).Username}
+                  {username}
                 </span>
               </p>
               <p>
@@ -339,15 +350,13 @@ export const ProfileView = () => {
               <p>
                 <strong>Email:</strong>{" "}
                 <span style={{ float: "right" }}>
-                  {JSON.parse(localStorage.getItem("user")).Email}
+                  {email}
                 </span>
               </p>
               <p>
                 <strong>Birthday:</strong>{" "}
                 <span style={{ float: "right" }}>
-                  {new Date(JSON.parse(localStorage.getItem("user")).Birthday)
-                    .toISOString()
-                    .substring(0, 10)}
+                  {birthday}
                 </span>
               </p>
             </Col>
