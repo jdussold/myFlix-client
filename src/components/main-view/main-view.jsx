@@ -13,10 +13,9 @@ export const MainView = () => {
   // Declare state variables to hold movies, user and token data, and a loading indicator
   const [movies, setMovies] = useState([]);
   // Get stored user and token data from local storage
-  const storedUser = JSON.parse(localStorage.getItem("user"));
   const storedToken = localStorage.getItem("token");
   // Set initial values for user and token using stored data, or null if not available
-  const [user, setUser] = useState(storedUser ? storedUser : null);
+  const [user, setUser] = useState(null);
   const [token, setToken] = useState(storedToken ? storedToken : null);
   const [loading, setLoading] = useState(true);
 
@@ -26,9 +25,22 @@ export const MainView = () => {
     if (!token) {
       return;
     }
+    getMovies()
+    // Only re-run this effect if the token changes
+  }, [token]);
 
-    // Fetch movie data when authorized
-    fetch("https://my-flix-db-jd.herokuapp.com/movies", {
+  useEffect(() => {
+    if(!user) {
+      return
+    }
+
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    getUser(storedUser.Username)
+  })
+
+  const getMovies = () => {
+     // Fetch movie data when authorized
+     fetch("https://my-flix-db-jd.herokuapp.com/movies", {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((response) => response.json()) // Convert the response to JSON
@@ -42,6 +54,7 @@ export const MainView = () => {
             description: movie.Description,
             genre: movie.Genre.Name,
             director: movie.Director.Name,
+            isFavorite: false
           };
         });
 
@@ -56,8 +69,48 @@ export const MainView = () => {
         // Set loading to false if there is an error
         setLoading(false);
       });
-    // Only re-run this effect if the token changes
-  }, [token]);
+  }
+   // Function to add or remove the movie as a favorite
+  const toggleFavorite = (movieId, isFavorite) => {
+    // Send a POST or DELETE request to the server
+    const method = isFavorite ? "DELETE" : "POST";
+    fetch(
+      `https://my-flix-db-jd.herokuapp.com/users/${
+        JSON.parse(localStorage.getItem("user")).Username
+      }/movies/${encodeURIComponent(movieId)}`,
+      {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    ).then(res => res.json())
+      .then((response) => {
+        setUser(response)
+        localStorage.setItem("user", JSON.stringify(response))
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
+  const getUser = (username) => {
+    fetch(`https://my-flix-db-jd.herokuapp.com/users/${username}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((response) => {
+        // If the request was successful
+        setUser(response);
+      })
+      .catch((error) => {
+        alert("An error occurred while fetching your profile");
+      });
+  };
 
   return (
     <BrowserRouter>
@@ -148,7 +201,10 @@ export const MainView = () => {
                   <>
                     {movies.map((movie) => (
                       <Col className="mt-4" md={3} key={movie.id}>
-                        <MovieCard movie={movie} />
+                        <MovieCard movie={movie} 
+                              isFavorite={user.FavoriteMovies.includes(movie.id)} 
+                              toggleFavorite={(isFavorite) => toggleFavorite(movie.id, isFavorite)}
+                              />
                       </Col>
                     ))}
                   </>
@@ -162,8 +218,7 @@ export const MainView = () => {
               <>
                 {/* Use a guard to only allow logged-in users to access the profile view */}
                 {user ? (
-                  // Pass the user object as a prop to the ProfileView component
-                  <ProfileView user={user} token={token} />
+                  <ProfileView  />
                 ) : (
                   <Navigate to="/login" />
                 )}
