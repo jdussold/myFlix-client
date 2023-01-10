@@ -17,22 +17,45 @@ export const ProfileView = () => {
   // Declare a state variable to store whether the "Delete Account" button has been clicked
   const [deleteClicked, setDeleteClicked] = useState(false);
   const [favoriteMovies, setFavoriteMovies] = useState([]);
+  const user = JSON.parse(localStorage.getItem("user"));
 
   // Use effect hook to retrieve the current user's information from localStorage
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user"));
     if (user) {
-      setUsername(user.Username);
-      setPassword(user.Password);
-      setEmail(user.Email);
-      // Parse the birthday string and format it as yyyy-MM-dd
-      const date = new Date(user.Birthday);
-      setBirthday(date.toISOString().substring(0, 10));
-      getUserFavoriteMovies(user);
+      getUser(user.Username);
+      getUserFavoriteMovies(user.FavoriteMovies);
     }
   }, []); // The empty array ensures that this effect only runs on mount
 
-  const getUserFavoriteMovies = (user) => {
+  // set User data from server
+  const setUser = (user) => {
+    setUsername(user.Username);
+    setPassword(user.Password);
+    setEmail(user.Email);
+    // Parse the birthday string and format it as yyyy-MM-dd
+    const date = new Date(user.Birthday);
+    setBirthday(date.toISOString().substring(0, 10));
+  };
+
+  // Fetch user from server
+  const getUser = (username) => {
+    fetch(`https://my-flix-db-jd.herokuapp.com/users/${username}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((response) => {
+        // If the request was successful
+        setUser(response);
+      })
+      .catch((error) => {
+        alert("An error occurred while fetching your profile");
+      });
+  };
+
+  const getUserFavoriteMovies = (favoriteMovies) => {
     fetch("https://my-flix-db-jd.herokuapp.com/movies", {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
     })
@@ -51,7 +74,7 @@ export const ProfileView = () => {
         });
         // Filter the movies to get only the movies that are favorited by the current user
         const userFavoriteMovies = moviesFromApi.filter((movie) =>
-          user.FavoriteMovies.includes(movie.id)
+          favoriteMovies.includes(movie.id)
         );
         // Update the favoriteMovies state with the user's favorite movies
         setFavoriteMovies(userFavoriteMovies);
@@ -70,10 +93,10 @@ export const ProfileView = () => {
 
     // Check if any of the form values have been changed from their default values or if the "Delete Account" button has been clicked
     if (
-      username !== JSON.parse(localStorage.getItem("user")).Username ||
+      username !== user.Username ||
       formPassword !== "********" ||
-      email !== JSON.parse(localStorage.getItem("user")).Email ||
-      birthday !== JSON.parse(localStorage.getItem("user")).Birthday ||
+      email !== user.Email ||
+      birthday !== user.Birthday ||
       deleteClicked
     ) {
       // If any of the form values have been changed or the "Delete Account" button has been clicked, show the modal to confirm the changes
@@ -92,108 +115,87 @@ export const ProfileView = () => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        username: JSON.parse(localStorage.getItem("user")).Username,
+        username: user.Username,
         password: modalPassword,
       }),
     })
+      .then((res) => res.json())
       .then((response) => {
-        // If the request was successful and the entered password is correct
-        if (response.ok) {
-          // If the "Delete Account" button has been clicked, send a DELETE request to delete the user's account
-          if (deleteClicked) {
-            fetch(
-              `https://my-flix-db-jd.herokuapp.com/users/${
-                JSON.parse(localStorage.getItem("user")).Username
-              }`,
-              {
-                method: "DELETE",
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-              }
-            )
-              .then((response) => {
-                // If the DELETE request was successful, log the user out and remove their information from localStorage
-                if (response.ok) {
-                  setShowModal(false);
-                  alert("Your account has been deleted");
-                  localStorage.removeItem("token");
-                  localStorage.removeItem("user");
-                  window.location = "/login";
-                } else {
-                  alert("An error occurred while deleting your account");
-                }
-              })
-              .catch((error) => {
-                console.error(error);
-                alert("An error occurred while deleting your account");
-              });
-          } else {
-            // If the "Delete Account" button has not been clicked, create an object with the form data
-            let data;
-            if (formPassword === "********") {
-              // If the password has not been updated from the default value, send an empty string as the password in the PUT request
-              data = {
-                Username: username,
-                Password: "",
-                Email: email,
-                Birthday: birthday,
-              };
-            } else {
-              // If the password has been updated, send the new password in the PUT request
-              data = {
-                Username: username,
-                Password: formPassword,
-                Email: email,
-                Birthday: birthday,
-              };
+        // If the "Delete Account" button has been clicked, send a DELETE request to delete the user's account
+        if (deleteClicked) {
+          fetch(
+            `https://my-flix-db-jd.herokuapp.com/users/${
+              JSON.parse(localStorage.getItem("user")).Username
+            }`,
+            {
+              method: "DELETE",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
             }
-
-            // Send a PUT request to the server with the updated form data to update the users information
-            fetch(
-              `https://my-flix-db-jd.herokuapp.com/users/${
-                JSON.parse(localStorage.getItem("user")).Username
-              }`,
-              {
-                method: "PUT",
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-                body: JSON.stringify(data),
-              }
-            )
-              .then((response) => {
-                // If the request was successful
-                if (response.ok) {
-                  alert(
-                    "Profile update successful. Please logout and log back in to see the updated information."
-                  );
-                  setUsername(username);
-                  setPassword(password);
-                  setEmail(email);
-                  setBirthday(birthday);
-                  setUpdateSuccess(true);
-                  setDisplayForm(false);
-                  setShowModal(false); // Hide the modal
-                } else {
-                  // If the request failed, show an alert
-                  alert("An error occurred while updating your profile");
-                  setUpdateSuccess(false);
-                }
-              })
-              .catch((error) => {
-                console.error(error);
-                alert("An error occurred while updating your profile");
-                setUpdateSuccess(false);
-              });
-          }
+          )
+            .then((res) => res.json())
+            .then((response) => {
+              // If the DELETE request was successful, log the user out and remove their information from localStorage
+              setShowModal(false);
+              alert("Your account has been deleted");
+              localStorage.removeItem("token");
+              localStorage.removeItem("user");
+              window.location = "/login";
+            })
+            .catch((error) => {
+              console.error(error);
+              alert("An error occurred while deleting your account");
+            });
         } else {
-          // If the entered password is incorrect, show an alert
-          alert("The password entered is incorrect. Please try again.");
-          setShowModal(false);
-          return;
+          // If the "Delete Account" button has not been clicked, create an object with the form data
+          let data;
+          if (formPassword === "********") {
+            // If the password has not been updated from the default value, send an empty string as the password in the PUT request
+            data = {
+              Username: username,
+              Password: "",
+              Email: email,
+              Birthday: birthday,
+            };
+          } else {
+            // If the password has been updated, send the new password in the PUT request
+            data = {
+              Username: username,
+              Password: formPassword,
+              Email: email,
+              Birthday: birthday,
+            };
+          }
+
+          // Send a PUT request to the server with the updated form data to update the users information
+          fetch(`https://my-flix-db-jd.herokuapp.com/users/${user.Username}`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+            body: JSON.stringify(data),
+          })
+            .then((res) => res.json())
+            .then((response) => {
+              // If the request was successful
+
+              alert("Profile update successful");
+              //update state
+              setUser(response);
+              //update localStorage
+              localStorage.setItem("user", JSON.stringify(response));
+              setUpdateSuccess(true);
+              setDisplayForm(false);
+              setShowModal(false); // Hide the modal
+            })
+            .catch((error) => {
+              console.error(error);
+              alert("An error occurred while updating your profile");
+              setUpdateSuccess(false);
+            });
         }
       })
       .catch((error) => {
@@ -214,8 +216,7 @@ export const ProfileView = () => {
         <Row>
           <Col md={{ span: 12 }}>
             <p style={{ color: "red" }}>
-              Profile information has been recently updated. Please log out and
-              back in to see the updated information.
+              Profile information has been recently updated.
             </p>
           </Col>
         </Row>
@@ -328,9 +329,7 @@ export const ProfileView = () => {
               {/* Display the current user information */}
               <p>
                 <strong>Username:</strong>{" "}
-                <span style={{ float: "right" }}>
-                  {JSON.parse(localStorage.getItem("user")).Username}
-                </span>
+                <span style={{ float: "right" }}>{username}</span>
               </p>
               <p>
                 <strong>Password:</strong>{" "}
@@ -338,30 +337,22 @@ export const ProfileView = () => {
               </p>
               <p>
                 <strong>Email:</strong>{" "}
-                <span style={{ float: "right" }}>
-                  {JSON.parse(localStorage.getItem("user")).Email}
-                </span>
+                <span style={{ float: "right" }}>{email}</span>
               </p>
               <p>
                 <strong>Birthday:</strong>{" "}
-                <span style={{ float: "right" }}>
-                  {new Date(JSON.parse(localStorage.getItem("user")).Birthday)
-                    .toISOString()
-                    .substring(0, 10)}
-                </span>
+                <span style={{ float: "right" }}>{birthday}</span>
               </p>
             </Col>
             <div>
               <h2>Favorite Movies</h2>
-              {favoriteMovies.length > 0 && (
-                <Row>
-                  {favoriteMovies.map((movie) => (
-                    <Col mb={2} md={5} key={movie.id}>
-                      <MovieCard movie={movie} />
-                    </Col>
-                  ))}
-                </Row>
-              )}
+              <Row>
+                {favoriteMovies.map((movie) => (
+                  <Col md={2} key={movie.id}>
+                    <MovieCard movie={movie} />
+                  </Col>
+                ))}
+              </Row>
             </div>
           </>
         )}
