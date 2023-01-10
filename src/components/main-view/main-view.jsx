@@ -70,7 +70,7 @@ export const MainView = () => {
           localStorage.removeItem("token");
         }}
       />
-      <Row className="justify-content-md-center">
+      <Row>
         <Routes>
           {/* renders the SignupView component if the user is not logged in, otherwise redirects to root path */}
           <Route
@@ -162,10 +162,8 @@ export const MainView = () => {
               <>
                 {/* Use a guard to only allow logged-in users to access the profile view */}
                 {user ? (
-                  <Col md={5}>
-                    {/* Pass the user object as a prop to the ProfileView component */}
-                    <ProfileView user={user} token={token} />
-                  </Col>
+                  // Pass the user object as a prop to the ProfileView component
+                  <ProfileView user={user} token={token} />
                 ) : (
                   <Navigate to="/login" />
                 )}
