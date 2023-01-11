@@ -23,7 +23,6 @@ export const ProfileView = () => {
   useEffect(() => {
     if (user) {
       getUser(user.Username);
-      getUserFavoriteMovies(user.FavoriteMovies);
     }
   }, []); // The empty array ensures that this effect only runs on mount
 
@@ -49,6 +48,8 @@ export const ProfileView = () => {
       .then((response) => {
         // If the request was successful
         setUser(response);
+
+        getUserFavoriteMovies(response.FavoriteMovies);
       })
       .catch((error) => {
         alert("An error occurred while fetching your profile");
@@ -209,6 +210,32 @@ export const ProfileView = () => {
       });
   };
 
+  const toggleFavorite = (movieId, isFavorite) => {
+    // Send a POST or DELETE request to the server
+    const method = isFavorite ? "DELETE" : "POST";
+    fetch(
+      `https://my-flix-db-jd.herokuapp.com/users/${
+        JSON.parse(localStorage.getItem("user")).Username
+      }/movies/${encodeURIComponent(movieId)}`,
+      {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((response) => {
+        setUser(response);
+        getUserFavoriteMovies(response.FavoriteMovies);
+        localStorage.setItem("user", JSON.stringify(response));
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
   // Render the form or the current user information
   return (
     <div>
@@ -348,8 +375,14 @@ export const ProfileView = () => {
               <h2>Favorite Movies</h2>
               <Row>
                 {favoriteMovies.map((movie) => (
-                  <Col md={2} key={movie.id}>
-                    <MovieCard movie={movie} />
+                  <Col className="mt-4" md={3} key={movie.id}>
+                    <MovieCard
+                      movie={movie}
+                      isFavorite={true}
+                      toggleFavorite={(isFavorite) =>
+                        toggleFavorite(movie.id, isFavorite)
+                      }
+                    />
                   </Col>
                 ))}
               </Row>
