@@ -1,5 +1,6 @@
 import { useParams } from "react-router";
 import { Link } from "react-router-dom";
+import { Button } from "react-bootstrap";
 import "./movie-view.scss";
 
 export const MovieView = ({ movies }) => {
@@ -10,26 +11,37 @@ export const MovieView = ({ movies }) => {
   return (
     <div>
       <div>
-        <img className="img-fluid w-50 d-block mx-auto" src={movie.image} />
+        <img
+          className="my-4 img-fluid w-50 d-block mx-auto"
+          src={movie.image}
+        />
       </div>
       <div>
-        <span>Title: </span>
+        <span>
+          <strong>Title:</strong>{" "}
+        </span>
         <span>{movie.title}</span>
       </div>
       <div>
-        <span>Director: </span>
+        <span>
+          <strong>Director:</strong>{" "}
+        </span>
         <span>{movie.director}</span>
       </div>
       <div>
-        <span>Description: </span>
+        <span>
+          <strong>Description:</strong>{" "}
+        </span>
         <span>{movie.description}</span>
       </div>
       <div>
-        <span>Genre: </span>
+        <span>
+          <strong>Genre:</strong>{" "}
+        </span>
         <span>{movie.genre}</span>
       </div>
       <Link to={`/`}>
-        <button className="back-button">Back</button>
+        <Button className="btn my-2">Back</Button>
       </Link>
     </div>
   );
