@@ -14,8 +14,9 @@ export const MainView = () => {
   const [movies, setMovies] = useState([]);
   // Get stored user and token data from local storage
   const storedToken = localStorage.getItem("token");
+  const storedUser = JSON.parse(localStorage.getItem("user"));
   // Set initial values for user and token using stored data, or null if not available
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(storedUser ? storedUser : null);
   const [token, setToken] = useState(storedToken ? storedToken : null);
   const [loading, setLoading] = useState(true);
 
@@ -33,9 +34,6 @@ export const MainView = () => {
     if (!user) {
       return;
     }
-
-    const storedUser = JSON.parse(localStorage.getItem("user"));
-    getUser(storedUser.Username);
   });
 
   const getMovies = () => {
