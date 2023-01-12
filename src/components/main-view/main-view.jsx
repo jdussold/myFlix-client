@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, Modal } from "react";
 import { MovieCard } from "../movie-card/movie-card";
 import { MovieView } from "../movie-view/movie-view";
 import { LoginView } from "../login-view/login-view";
@@ -19,6 +19,8 @@ export const MainView = () => {
   const [user, setUser] = useState(storedUser ? storedUser : null);
   const [token, setToken] = useState(storedToken ? storedToken : null);
   const [loading, setLoading] = useState(true);
+  const [showModal, setShowModal] = useState(true); // state to control visibility of modal
+  const [formType, setFormType] = useState("login"); // state to control which form is displayed
 
   // Fetch movie data when the token changes
   useEffect(() => {

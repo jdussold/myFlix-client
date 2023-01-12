@@ -372,7 +372,7 @@ export const ProfileView = () => {
               </p>
             </Col>
             <div>
-              <h2>Favorite Movies</h2>
+              <h2 style={{ color: "#FFA400" }}>Favorite Movies</h2>
               <Row>
                 {favoriteMovies.map((movie) => (
                   <Col className="mt-4" md={3} key={movie.id}>

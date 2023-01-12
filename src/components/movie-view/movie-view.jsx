@@ -9,10 +9,10 @@ export const MovieView = ({ movies }) => {
   const movie = movies.find((m) => m.id === movieId);
 
   return (
-    <div>
+    <div className="center-div">
       <div>
         <img
-          className="my-4 img-fluid w-50 d-block mx-auto"
+          className="img-poster my-4 img-fluid w-50 d-block mx-auto"
           src={movie.image}
         />
       </div>
@@ -40,9 +40,11 @@ export const MovieView = ({ movies }) => {
         </span>
         <span>{movie.genre}</span>
       </div>
-      <Link to={`/`}>
-        <Button className="btn my-2">Back</Button>
-      </Link>
+      <div className="mt-4 text-center">
+        <Link to={`/`}>
+          <Button className="btn my-2">Back</Button>
+        </Link>
+      </div>
     </div>
   );
 };
