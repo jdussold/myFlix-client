@@ -11,3 +11,18 @@
 .navbar a:visited {
   color: #ffa400;
 }
+
+.orange-border:focus {
+  border-color: #ffa400;
+  box-shadow: 0 0 0 0.1rem rgba(255, 165, 0, 1);
+}
+
+.orange-outline-btn {
+  border-color: #ffa400 !important;
+  color: #ffa400;
+}
+
+.orange-outline-btn:hover {
+  background-color: #ffa400;
+  color: white;
+}
