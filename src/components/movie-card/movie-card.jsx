@@ -11,6 +11,7 @@ import "./movie-card.scss";
 export const MovieCard = ({ movie, isFavorite, toggleFavorite }) => {
   return (
     <Card className="h-100 movie-card" style={{ backgroundColor: "#1F2941" }}>
+      {/* Link to the movie's details page */}
       <Link to={`/movies/${encodeURIComponent(movie.id)}`}>
         <Card.Img
           variant="top"
@@ -25,6 +26,7 @@ export const MovieCard = ({ movie, isFavorite, toggleFavorite }) => {
           {movie.title}
         </Card.Title>
         <Card.Text className="card-text">{movie.director}</Card.Text>
+        {/* Link to the movie's details page */}
         <Link to={`/movies/${encodeURIComponent(movie.id)}`}>
           <Button className="btn mr-2">Details</Button>
         </Link>
