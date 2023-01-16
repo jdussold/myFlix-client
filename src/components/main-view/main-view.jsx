@@ -5,7 +5,7 @@ import { LoginView } from "../login-view/login-view";
 import { SignupView } from "../signup-view/signup-view";
 import { NavigationBar } from "../navigation-bar/navigation-bar";
 import { ProfileView } from "../profile-view/profile-view";
-import { Row, Col, Button } from "react-bootstrap";
+import { Row, Col } from "react-bootstrap";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import "./main-view.scss";
 
@@ -19,8 +19,8 @@ export const MainView = () => {
   const [user, setUser] = useState(storedUser ? storedUser : null);
   const [token, setToken] = useState(storedToken ? storedToken : null);
   const [loading, setLoading] = useState(true);
-  const [showModal, setShowModal] = useState(true); // state to control visibility of modal
-  const [formType, setFormType] = useState("login"); // state to control which form is displayed
+  const [searchInput, setSearchInput] = useState("");
+  const [filterCriteria, setFilterCriteria] = useState("title");
 
   // Fetch movie data when the token changes
   useEffect(() => {
@@ -38,8 +38,8 @@ export const MainView = () => {
     }
   });
 
+  //Function to fetch movie data when authorized
   const getMovies = () => {
-    // Fetch movie data when authorized
     fetch("https://my-flix-db-jd.herokuapp.com/movies", {
       headers: { Authorization: `Bearer ${token}` },
     })
@@ -97,6 +97,7 @@ export const MainView = () => {
   };
 
   const getUser = (username) => {
+    // Fetch user data based on the passed in username
     fetch(`https://my-flix-db-jd.herokuapp.com/users/${username}`, {
       method: "GET",
       headers: {
@@ -109,9 +110,36 @@ export const MainView = () => {
         setUser(response);
       })
       .catch((error) => {
+        // Display an alert if there was an error
         alert("An error occurred while fetching your profile");
       });
   };
+
+  // Handle changes in the search input field
+  const handleSearchInput = (e) => {
+    setSearchInput(e.target.value);
+  };
+
+  // Handle changes in the filter criteria selection field
+  const handleFilterSelection = (e) => {
+    setFilterCriteria(e.target.value);
+  };
+
+  // Filter movies based on the search input and selected filter criteria
+  const filteredMovies = movies.filter((movie) => {
+    if (filterCriteria === "title") {
+      // Return only movies that have a title that includes the search input
+      return movie.title.toLowerCase().includes(searchInput.toLowerCase());
+    }
+    if (filterCriteria === "genre") {
+      // Return only movies that have a genre that includes the search input
+      return movie.genre.toLowerCase().includes(searchInput.toLowerCase());
+    }
+    if (filterCriteria === "director") {
+      // Return only movies that have a director that includes the search input
+      return movie.director.toLowerCase().includes(searchInput.toLowerCase());
+    }
+  });
 
   return (
     <BrowserRouter>
@@ -120,9 +148,13 @@ export const MainView = () => {
         onLoggedOut={() => {
           setUser(null);
           setToken(null);
+          setSearchInput("");
+          setFilterCriteria("title");
           localStorage.removeItem("user");
           localStorage.removeItem("token");
         }}
+        handleSearchInput={(e) => setSearchInput(e.target.value)}
+        handleFilterSelection={(e) => setFilterCriteria(e.target.value)}
       />
       <Row>
         <Routes>
@@ -200,7 +232,7 @@ export const MainView = () => {
                   <Col>The list is empty!</Col>
                 ) : (
                   <>
-                    {movies.map((movie) => (
+                    {filteredMovies.map((movie) => (
                       <Col className="mt-4" md={3} key={movie.id}>
                         <MovieCard
                           movie={movie}
