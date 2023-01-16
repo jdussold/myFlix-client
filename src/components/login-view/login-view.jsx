@@ -55,9 +55,12 @@ export const LoginView = ({ onLoggedIn, setLoading }) => {
       style={{ width: "18rem", backgroundColor: "#1F2941" }}
     >
       <Card.Body>
+        {/* logo image */}
         <img src={logo} alt="Logo" className="logo-img" />
 
+        {/* Form for inputting username and password */}
         <Form onSubmit={handleSubmit}>
+          {/* Input for username */}
           <Form.Group controlId="formUsername">
             <Form.Label>Username:</Form.Label>
             <Form.Control
@@ -69,6 +72,7 @@ export const LoginView = ({ onLoggedIn, setLoading }) => {
             />
           </Form.Group>
 
+          {/* Input for password */}
           <Form.Group controlId="formPassword">
             <Form.Label>Password:</Form.Label>
             <Form.Control
@@ -79,11 +83,13 @@ export const LoginView = ({ onLoggedIn, setLoading }) => {
             />
           </Form.Group>
           <div className="text-center">
+            {/* Submit button */}
             <Button className="my-3" variant="primary" type="submit">
               LOG IN
             </Button>
           </div>
         </Form>
+        {/* Link to create an account */}
         <div className="text-center">
           <p>
             No account?{" "}
