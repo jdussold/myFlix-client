@@ -1,4 +1,5 @@
 .img-cover {
+  margin-top: 15px;
   height: 300px;
   width: 100%;
   object-fit: contain;
@@ -9,6 +10,21 @@
   color: whitesmoke;
 }
 
-.card {
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+.movie-card {
+  box-shadow: 0 6px 10px 0 rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease-in-out;
+}
+
+.movie-card:hover {
+  transition: all 0.3s ease-in-out;
+  border: 1px solid #ffa400;
+}
+
+.custom-btn {
+  background-color: #ffa400 !important;
+  border: 2px solid #ffa400 !important;
+}
+
+.custom-btn:hover {
+  filter: brightness(80%);
 }

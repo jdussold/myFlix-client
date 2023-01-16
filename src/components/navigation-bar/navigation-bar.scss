@@ -5,13 +5,24 @@
 }
 
 .navbar a {
-  color: dodgerblue;
-}
-
-.navbar a:hover {
-  color: rgba(245, 245, 245, 0.678);
+  color: #ffa400;
 }
 
 .navbar a:visited {
-  color: dodgerblue;
+  color: #ffa400;
+}
+
+.orange-border:focus {
+  border-color: #ffa400;
+  box-shadow: 0 0 0 0.1rem rgba(255, 165, 0, 1);
+}
+
+.orange-outline-btn {
+  border-color: #ffa400 !important;
+  color: #ffa400;
+}
+
+.orange-outline-btn:hover {
+  background-color: #ffa400;
+  color: white;
 }

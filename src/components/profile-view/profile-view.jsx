@@ -211,7 +211,7 @@ export const ProfileView = () => {
   };
 
   const toggleFavorite = (movieId, isFavorite) => {
-    // Send a POST or DELETE request to the server
+    // Send a DELETE request to the server if the movie is already marked as favorite, or a POST request if it is not yet marked as favorite
     const method = isFavorite ? "DELETE" : "POST";
     fetch(
       `https://my-flix-db-jd.herokuapp.com/users/${
@@ -239,6 +239,7 @@ export const ProfileView = () => {
   // Render the form or the current user information
   return (
     <div>
+      {/* Displaying a message if the update was successful */}
       {updateSuccess && (
         <Row>
           <Col md={{ span: 12 }}>
@@ -259,6 +260,7 @@ export const ProfileView = () => {
             >
               {displayForm ? "Cancel" : "Edit Profile"}
             </Button>
+            {/* Showing delete account button only when form is displayed */}
             {displayForm && (
               <Button
                 type="submit"
@@ -276,6 +278,7 @@ export const ProfileView = () => {
           </div>
         </Col>
 
+        {/* Toggling the form based on the value of 'displayForm' */}
         {displayForm ? (
           <Col md={6} style={{ marginTop: "20px" }}>
             <Form onSubmit={handleSubmit}>
@@ -318,7 +321,7 @@ export const ProfileView = () => {
                   onChange={(e) => setBirthday(e.target.value)}
                 />
               </Form.Group>
-
+              {/* Showing a modal to confirm changes */}
               <Modal show={showModal} onHide={() => setShowModal(false)}>
                 <Modal.Header closeButton>
                   <Modal.Title>Confirm Changes</Modal.Title>
@@ -372,7 +375,7 @@ export const ProfileView = () => {
               </p>
             </Col>
             <div>
-              <h2>Favorite Movies</h2>
+              <h2 style={{ color: "#FFA400" }}>Favorite Movies</h2>
               <Row>
                 {favoriteMovies.map((movie) => (
                   <Col className="mt-4" md={3} key={movie.id}>

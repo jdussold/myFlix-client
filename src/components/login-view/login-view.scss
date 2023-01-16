@@ -1,0 +1,25 @@
+.center-card {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 6px 10px 0 rgba(0, 0, 0, 0.2);
+}
+
+.center-card:focus-within {
+  border: 1px solid #ffa400;
+}
+
+.logo-img {
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+a {
+  color: #ffa400;
+  text-decoration: none;
+}
+
+a:hover {
+  color: white;
+}

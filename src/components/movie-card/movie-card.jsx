@@ -10,12 +10,8 @@ import "./movie-card.scss";
 // The component returns a Card element with an image, title, director, and a button
 export const MovieCard = ({ movie, isFavorite, toggleFavorite }) => {
   return (
-    <Card
-      className="h-100"
-      d-flex
-      align-items-stretch
-      style={{ backgroundColor: "#1F2941" }}
-    >
+    <Card className="h-100 movie-card" style={{ backgroundColor: "#1F2941" }}>
+      {/* Link to the movie's details page */}
       <Link to={`/movies/${encodeURIComponent(movie.id)}`}>
         <Card.Img
           variant="top"
@@ -30,13 +26,14 @@ export const MovieCard = ({ movie, isFavorite, toggleFavorite }) => {
           {movie.title}
         </Card.Title>
         <Card.Text className="card-text">{movie.director}</Card.Text>
+        {/* Link to the movie's details page */}
         <Link to={`/movies/${encodeURIComponent(movie.id)}`}>
           <Button className="btn mr-2">Details</Button>
         </Link>
       </Card.Body>
       {/* Add a button to add or remove the movie as a favorite */}
       <Button
-        className="btn"
+        className="custom-btn"
         onClick={() => toggleFavorite(isFavorite)}
         style={{ position: "absolute", top: "10px", right: "10px" }}
       >
