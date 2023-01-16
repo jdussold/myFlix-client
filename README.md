@@ -1,65 +1,82 @@
-# myFlix-client!
+**myFlix-client**
 
-## Objective
+**Overview**
 
-Using React, build the client-side for an application called myFlix based on its existing server-side code (REST API and database).
+This project is a client-side application built using React, that connects to an existing server-side codebase (REST API and database) for an application called myFlix. The goal is to create a polished, responsive, single-page application with routing and rich interactions, providing a seamless user experience for movie enthusiasts.
 
-## The 5 Ws
+**Users**
 
-#### Who
+The users of the myFlix application will be movie enthusiasts who enjoy reading information about different movies.
 
-- The users of your myFlix application. They will be movie enthusiasts who enjoy reading information about different movies.
+**Features**
 
-#### What
+- Users can register a new account or log in to an existing account.
+- Users can update their user information and favorite movies from their profile page.
+- Users can add or remove movies from their favorites list by clicking on the favorites icon on each movie from the main view.
+- Users can search for movies by title, genre, or director via the search options located on the navigation bar.
+- Responsive design allows for usage on any device, online.
 
-- A single-page, responsive application with routing, rich interactions, several interface views, and a polished user experience. The client-side developed in this Achievement will support the existing server-side from Achievement 2 by facilitating user requests and rendering the response from the server-side via a number of different interface views.
+**Components**
 
-#### When
+**LoginView**
 
-- myFlix users will be able to use it whenever they want to read information about different movies or update their user information—for instance, their list of “Favorite Movies.”
+![Login](/src/img/LoginCard.jpg){:align="center"}
 
-#### Where
+This is a functional component that displays a login form with inputs for the username and password, and a submit button. The component uses **React** and **useState** for handling component state and lifecycle methods, as well as **Button** and **Form** from **react-bootstrap** for styling the form and button, **Card** from **react-bootstrap** for styling the card, **./login-view.scss** for styling, and **logo** from **../../img/logo-color.svg** for displaying the app logo.
 
-- The application will be hosted online. The myFlix application itself is responsive and can therefore be used anywhere and on any device, giving all users the same experience.
+The component takes in props **onLoggedIn** and **setLoading** as arguments, and has two state variables **username** and **password** which are controlled by the form inputs. A submit button makes a POST request to the login endpoint with the data. If the server returns a user object, the component stores the user and token in local storage and calls the **onLoggedIn** function.
 
-#### Why
+**SignupView**
 
-- Movie enthusiasts like to be able to access information about different movies, directors, and genres, whenever they want to. Having the ability to save lists of favorite movies will ensure users always have access to the films they want to watch or recommend to their peers.
+![Registration](/src/img/RegistrationCard.jpg){:align="center"}
 
-## Features
+This component allows the user to create a new account by providing a username, password, email, and birthday. On successful signup, the user is logged in and the token is stored in localstorage.
 
-You can rename the current file by clicking the file name in the navigation bar or by clicking the **Rename** button in the file explorer.
+**NavigationBar**
 
-#### Main view
+![NavBar](/src/img/NavigationBar.jpg){:align="center"}
 
-- Returns a list of ALL movies to the user (each listed item with an image, title, and description)
-- Sorting and filtering
-- Ability to select a movie for more details
+This component is a navigation bar that appears at the top of the page on all views. It provides links to the different pages of the application, and also allows users to search for movies and filter their search results by title, genre, and director.  The NavigationBar component is a presentational component that takes the following props:
 
-#### Single movie view
+- **user**: An object representing the currently logged-in user
+- **onSearch**: A function that is called when the user submits the search form. It takes the search query and filter criteria as arguments.
 
-- Returns data (description, genre, director, image) about a single movie to \* the user
-- Allows users to add a movie to their list of favorites
+It also has some state variables to keep track of the search query and filter criteria, and event handlers to handle changes to the search form inputs and form submission.
 
-#### Login view
+**MovieCard**
 
-- Allows users to log in with a username and password
-- Registration view
-- Allows new users to register (username, password, email, birthday)
+![MovieCard](/src/img/MovieCard.jpg){:align="center"}
 
-#### Genre view
+This component is a presentational component that displays a movie card with the movie poster, title, and a favorite button. It takes the following props:
 
-- Returns data about a genre, with a name and description
-- Displays example movies
+- **movie**: An object representing the movie
+- **onFavorite**: A function that is called when the favorite button is clicked. It takes the movie id as an argument.
 
-#### Director view
+It uses the **Card** component from **react-bootstrap** for styling and **./movie-card.scss** for additional styling. The favorite button is a toggle button that changes state when clicked, and calls the **onFavorite** prop function with the movie id as an argument.
 
-- Returns data about a director (name, bio, birth year, death year)
-- Displays example movies Page 2
+**MovieView**
 
-#### Profile view
+![MovieView](/src/img/MovieView.jpg){:align="center"}
 
-- Allows users to update their user info (username, password, email, date of birth)
-- Allows existing users to deregister
-- Displays favorite movies
-- Allows users to remove a movie from their list of favorite
+This component is a container component that displays the details of a selected movie. It takes the following props:
+
+- **movieId**: A string that represents the id of the selected movie
+- **user**: An object representing the currently logged-in user
+
+It uses the **useEffect** hook to fetch the movie data from the server when the component is mounted and updates. It also has a state variable and event handlers to handle updates to the user's favorite list and a function to send a PUT request to the server to update the user's favorite list.
+
+This is an overview of how the components are organized and how they interact with each other and the server-side. With these components, the myFlix client-side application should provide a seamless and rich user experience for movie enthusiasts.
+
+**ProfileView**
+
+![ProfileView](/src/img/ProfileView.jpg){:align="center"}
+
+This component is a container component that displays the user's profile information and allows the user to update their user information and favorite movies. It takes the following props:
+
+- **user**: An object representing the currently logged-in user
+
+![EditProfile](/src/img/EditProfile.jpg){:align="center"}
+
+It has state variables and event handlers to handle updates to the user's profile information and favorite list, and a function to send a PUT request to the server to update the user's profile information and favorite list.
+
+It also uses the **Form** and **Button** components from **react-bootstrap** for styling the form and buttons, and **./profile-view.scss** for additional styling.
