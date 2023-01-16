@@ -65,8 +65,6 @@ This component is a container component that displays the details of a selected 
 
 It uses the **useEffect** hook to fetch the movie data from the server when the component is mounted and updates. It also has a state variable and event handlers to handle updates to the user's favorite list and a function to send a PUT request to the server to update the user's favorite list.
 
-This is an overview of how the components are organized and how they interact with each other and the server-side. With these components, the myFlix client-side application should provide a seamless and rich user experience for movie enthusiasts.
-
 **ProfileView**
 
 ![ProfileView](/src/img/ProfileView.jpg){:align="center"}
@@ -80,3 +78,5 @@ This component is a container component that displays the user's profile informa
 It has state variables and event handlers to handle updates to the user's profile information and favorite list, and a function to send a PUT request to the server to update the user's profile information and favorite list.
 
 It also uses the **Form** and **Button** components from **react-bootstrap** for styling the form and buttons, and **./profile-view.scss** for additional styling.
+
+This is an overview of how the components are organized and how they interact with each other and the server-side. With these components, the myFlix client-side application should provide a seamless and rich user experience for movie enthusiasts.
