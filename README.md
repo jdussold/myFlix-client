@@ -20,7 +20,7 @@ The users of the myFlix application will be movie enthusiasts who enjoy reading 
 
 **LoginView**
 
-![Login](/src/img/LoginCard.jpg){:align="center"}
+![Login](/src/img/LoginCard.jpg)
 
 This is a functional component that displays a login form with inputs for the username and password, and a submit button. The component uses **React** and **useState** for handling component state and lifecycle methods, as well as **Button** and **Form** from **react-bootstrap** for styling the form and button, **Card** from **react-bootstrap** for styling the card, **./login-view.scss** for styling, and **logo** from **../../img/logo-color.svg** for displaying the app logo.
 
@@ -28,13 +28,13 @@ The component takes in props **onLoggedIn** and **setLoading** as arguments, and
 
 **SignupView**
 
-![Registration](/src/img/RegistrationCard.jpg){:align="center"}
+![Registration](/src/img/RegistrationCard.jpg)
 
 This component allows the user to create a new account by providing a username, password, email, and birthday. On successful signup, the user is logged in and the token is stored in localstorage.
 
 **NavigationBar**
 
-![NavBar](/src/img/NavigationBar.jpg){:align="center"}
+![NavBar](/src/img/NavigationBar.jpg)
 
 This component is a navigation bar that appears at the top of the page on all views. It provides links to the different pages of the application, and also allows users to search for movies and filter their search results by title, genre, and director.  The NavigationBar component is a presentational component that takes the following props:
 
@@ -45,7 +45,7 @@ It also has some state variables to keep track of the search query and filter cr
 
 **MovieCard**
 
-![MovieCard](/src/img/MovieCard.jpg){:align="center"}
+![MovieCard](/src/img/MovieCard.jpg)
 
 This component is a presentational component that displays a movie card with the movie poster, title, and a favorite button. It takes the following props:
 
@@ -56,7 +56,7 @@ It uses the **Card** component from **react-bootstrap** for styling and **./movi
 
 **MovieView**
 
-![MovieView](/src/img/MovieView.jpg){:align="center"}
+![MovieView](/src/img/MovieView.jpg)
 
 This component is a container component that displays the details of a selected movie. It takes the following props:
 
@@ -67,13 +67,13 @@ It uses the **useEffect** hook to fetch the movie data from the server when the 
 
 **ProfileView**
 
-![ProfileView](/src/img/ProfileView.jpg){:align="center"}
+![ProfileView](/src/img/ProfileView.jpg)
 
 This component is a container component that displays the user's profile information and allows the user to update their user information and favorite movies. It takes the following props:
 
 - **user**: An object representing the currently logged-in user
 
-![EditProfile](/src/img/EditProfile.jpg){:align="center"}
+![EditProfile](/src/img/EditProfile.jpg)
 
 It has state variables and event handlers to handle updates to the user's profile information and favorite list, and a function to send a PUT request to the server to update the user's profile information and favorite list.
 
