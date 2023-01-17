@@ -28,8 +28,8 @@ export const MainView = () => {
       return;
     }
     getMovies();
-    // Only re-run this effect if the token or favoriteMovies changes
-  }, [token, favoriteMovies]);
+    // Only re-run this effect if the token changes
+  }, [token]);
 
   useEffect(() => {
     if (!user) {
