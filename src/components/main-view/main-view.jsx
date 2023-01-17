@@ -22,15 +22,14 @@ export const MainView = () => {
   const [searchInput, setSearchInput] = useState("");
   const [filterCriteria, setFilterCriteria] = useState("title");
 
-  // Fetch movie data when the token changes
   useEffect(() => {
     // If there is no token, return early
     if (!token) {
       return;
     }
     getMovies();
-    // Only re-run this effect if the token changes
-  }, [token]);
+    // Only re-run this effect if the token or favoriteMovies changes
+  }, [token, favoriteMovies]);
 
   useEffect(() => {
     if (!user) {
