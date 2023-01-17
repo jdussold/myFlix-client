@@ -77,6 +77,8 @@ export const ProfileView = () => {
         const userFavoriteMovies = moviesFromApi.filter((movie) =>
           favoriteMovies.includes(movie.id)
         );
+        // Sort movies alphabetically
+        userFavoriteMovies.sort((a, b) => (a.title > b.title ? 1 : -1));
         // Update the favoriteMovies state with the user's favorite movies
         setFavoriteMovies(userFavoriteMovies);
       })
