@@ -57,7 +57,8 @@ export const MainView = () => {
             isFavorite: false,
           };
         });
-
+        // Sort list alphabetically
+        moviesFromApi.sort((a, b) => (a.title > b.title ? 1 : -1));
         // Update the movies state with the newly formatted data
         setMovies(moviesFromApi);
         // Set loading to false once the data has been fetched
