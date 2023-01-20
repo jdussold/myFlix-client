@@ -1,5 +1,7 @@
 **myFlix-client**
 
+https://myflix-jd.netlify.app/
+
 **Overview**
 
 This project is a client-side application built using React, that connects to an existing server-side codebase (REST API and database) for an application called myFlix. The goal is to create a polished, responsive, single-page application with routing and rich interactions, providing a seamless user experience for movie enthusiasts.
