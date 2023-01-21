@@ -38,7 +38,7 @@ export const MovieCard = ({ movie, isFavorite, toggleFavorite }) => {
         style={{ position: "absolute", top: "10px", right: "10px" }}
       >
         {isFavorite ? (
-          <i className="fas fa-star"></i>
+          <i className="fas fa-star" style={{ color: "#0D6EFD" }}></i>
         ) : (
           <i className="far fa-star"></i>
         )}
