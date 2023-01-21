@@ -72,10 +72,6 @@ export const NavigationBar = ({
                 <option value="genre">Genre</option>
                 <option value="director">Director</option>
               </FormControl>
-              {/* Search button*/}
-              <Button variant="outline-success" className="orange-outline-btn">
-                Search
-              </Button>
             </Form>
           )}
         </Navbar.Collapse>
