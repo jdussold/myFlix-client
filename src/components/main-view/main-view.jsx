@@ -7,6 +7,7 @@ import { NavigationBar } from "../navigation-bar/navigation-bar";
 import { ProfileView } from "../profile-view/profile-view";
 import { Row, Col } from "react-bootstrap";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { PulseLoader } from "react-spinners";
 import "./main-view.scss";
 
 export const MainView = () => {
@@ -208,7 +209,9 @@ export const MainView = () => {
                 {!user ? (
                   <Navigate to="/login" replace />
                 ) : loading ? (
-                  <div>Loading...</div>
+                  <div className="loading-container">
+                    <PulseLoader color="#007bff" />
+                  </div>
                 ) : movies.length === 0 ? (
                   <Col>The list is empty!</Col>
                 ) : (
@@ -227,7 +230,9 @@ export const MainView = () => {
                 {!user ? (
                   <Navigate to="/login" replace />
                 ) : loading ? (
-                  <div>Loading...</div>
+                  <div className="loading-container">
+                    <PulseLoader color="#007bff" />
+                  </div>
                 ) : movies.length === 0 ? (
                   <Col>The list is empty!</Col>
                 ) : (
