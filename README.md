@@ -1,8 +1,8 @@
-**myFlix-client**
+# myFlix-client\*\*
 
 https://myflix-jd.netlify.app/
 
-# Table of Contents
+## Table of Contents
 
 - [Overview](#overview)
 - [Users](#users)
@@ -15,15 +15,15 @@ https://myflix-jd.netlify.app/
   - [MovieView](#movieview)
   - [ProfileView](#profileview)
 
-**Overview**
+## Overview
 
 This project is a client-side application built using React, that connects to an existing server-side codebase (REST API and database) for an application called myFlix. The goal is to create a polished, responsive, single-page application with routing and rich interactions, providing a seamless user experience for movie enthusiasts.
 
-**Users**
+## Users
 
 The users of the myFlix application will be movie enthusiasts who enjoy reading information about different movies.
 
-**Features**
+## Features
 
 - Users can register a new account or log in to an existing account.
 - Users can update their user information and favorite movies from their profile page.
@@ -31,9 +31,9 @@ The users of the myFlix application will be movie enthusiasts who enjoy reading 
 - Users can search for movies by title, genre, or director via the search options located on the navigation bar.
 - Responsive design allows for usage on any device, online.
 
-**Components**
+## Components
 
-**LoginView**
+## LoginView
 
 ![Login](/src/img/LoginCard.jpg)
 
@@ -41,13 +41,13 @@ This is a functional component that displays a login form with inputs for the us
 
 The component takes in props **onLoggedIn** and **setLoading** as arguments, and has two state variables **username** and **password** which are controlled by the form inputs. A submit button makes a POST request to the login endpoint with the data. If the server returns a user object, the component stores the user and token in local storage and calls the **onLoggedIn** function.
 
-**SignupView**
+## SignupView
 
 ![Registration](/src/img/RegistrationCard.jpg)
 
 This component allows the user to create a new account by providing a username, password, email, and birthday. On successful signup, the user is logged in and the token is stored in localstorage.
 
-**NavigationBar**
+## NavigationBar
 
 ![NavBar](/src/img/NavigationBar.jpg)
 
@@ -58,7 +58,7 @@ This component is a navigation bar that appears at the top of the page on all vi
 
 It also has some state variables to keep track of the search query and filter criteria, and event handlers to handle changes to the search form inputs and form submission.
 
-**MovieCard**
+## MovieCard
 
 ![MovieCard](/src/img/MovieCard.jpg)
 
@@ -69,7 +69,7 @@ This component is a presentational component that displays a movie card with the
 
 It uses the **Card** component from **react-bootstrap** for styling and **./movie-card.scss** for additional styling. The favorite button is a toggle button that changes state when clicked, and calls the **onFavorite** prop function with the movie id as an argument.
 
-**MovieView**
+## MovieView
 
 ![MovieView](/src/img/MovieView.jpg)
 
@@ -80,7 +80,7 @@ This component is a container component that displays the details of a selected 
 
 It uses the **useEffect** hook to fetch the movie data from the server when the component is mounted and updates. It also has a state variable and event handlers to handle updates to the user's favorite list and a function to send a PUT request to the server to update the user's favorite list.
 
-**ProfileView**
+## ProfileView
 
 ![ProfileView](/src/img/ProfileView.jpg)
 
