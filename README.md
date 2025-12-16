@@ -1,3 +1,5 @@
+> ⚠️ **Security Note:** This project uses Parcel 2.16.3, which has a [known dev server vulnerability](https://github.com/advisories/GHSA-qm9p-f9j5-w83w) (CVE-2025-56648). No patch is available yet. If you run the dev server locally, avoid visiting untrusted websites in the same browser session.
+
 # myFlix-client\*\*
 
 https://myflix-jd.netlify.app/
