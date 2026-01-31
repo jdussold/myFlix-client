@@ -43,5 +43,8 @@
     "stream-browserify": "^3.0.0",
     "url": "^0.11.4",
     "util": "^0.12.5"
+  },
+  "overrides": {
+    "fast-xml-parser": "^5.3.4"
   }
 }
