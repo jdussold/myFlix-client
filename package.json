@@ -45,6 +45,6 @@
     "util": "^0.12.5"
   },
   "overrides": {
-    "fast-xml-parser": "^5.3.4"
+    "fast-xml-parser": "^5.5.6"
   }
 }
