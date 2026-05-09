@@ -4,6 +4,7 @@ import Form from "react-bootstrap/Form";
 import { Card } from "react-bootstrap";
 import "./login-view.scss";
 import logo from "../../img/logo-color.svg";
+import { API_BASE_URL } from "../../config";
 
 export const LoginView = ({ onLoggedIn, setLoading }) => {
   // Declare a state variable called "username" and a function to update it
@@ -24,7 +25,7 @@ export const LoginView = ({ onLoggedIn, setLoading }) => {
     };
 
     // Make a POST request to the login endpoint with the data
-    fetch("https://my-flix-db-jd.herokuapp.com/login", {
+    fetch(`${API_BASE_URL}/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

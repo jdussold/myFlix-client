@@ -16,7 +16,7 @@ export const NavigationBar = ({
   handleFilterSelection,
 }) => {
   return (
-    <Navbar bg="light" expand="lg">
+    <Navbar expand="lg">
       <Container>
         {/* Setting the brand name to MyFlix, with a link to the home page */}
         <Navbar.Brand style={{ color: "#FFA400" }} as={Link} to="/">
@@ -54,7 +54,7 @@ export const NavigationBar = ({
           </Nav>
           {/* If a user is logged in then display search bar */}
           {user && (
-            <Form inline className="d-flex">
+            <Form className="d-flex">
               {/*Input field for searching */}
               <FormControl
                 type="text"

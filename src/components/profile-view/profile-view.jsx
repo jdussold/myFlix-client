@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Button, Form, Row, Col, Modal } from "react-bootstrap";
 import { MovieCard } from "../movie-card/movie-card";
+import { API_BASE_URL } from "../../config";
 
 export const ProfileView = () => {
   // Declare state variables for the form inputs, the token, and the displayForm state
@@ -38,7 +39,7 @@ export const ProfileView = () => {
 
   // Fetch user from server
   const getUser = (username) => {
-    fetch(`https://my-flix-db-jd.herokuapp.com/users/${username}`, {
+    fetch(`${API_BASE_URL}/users/${username}`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -57,7 +58,7 @@ export const ProfileView = () => {
   };
 
   const getUserFavoriteMovies = (favoriteMovies) => {
-    fetch("https://my-flix-db-jd.herokuapp.com/movies", {
+    fetch(`${API_BASE_URL}/movies`, {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
     })
       .then((response) => response.json()) // Convert the response to JSON
@@ -112,7 +113,7 @@ export const ProfileView = () => {
   // Event handler for when the "Confirm" button in the modal is clicked
   const handleModalConfirm = () => {
     // Send a request to the server to check if the entered password is correct
-    fetch("https://my-flix-db-jd.herokuapp.com/verify-password", {
+    fetch(`${API_BASE_URL}/verify-password`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -127,7 +128,7 @@ export const ProfileView = () => {
         // If the "Delete Account" button has been clicked, send a DELETE request to delete the user's account
         if (deleteClicked) {
           fetch(
-            `https://my-flix-db-jd.herokuapp.com/users/${
+            `${API_BASE_URL}/users/${
               JSON.parse(localStorage.getItem("user")).Username
             }`,
             {
@@ -173,7 +174,7 @@ export const ProfileView = () => {
           }
 
           // Send a PUT request to the server with the updated form data to update the users information
-          fetch(`https://my-flix-db-jd.herokuapp.com/users/${user.Username}`, {
+          fetch(`${API_BASE_URL}/users/${user.Username}`, {
             method: "PUT",
             headers: {
               "Content-Type": "application/json",
@@ -216,7 +217,7 @@ export const ProfileView = () => {
     // Send a DELETE request to the server if the movie is already marked as favorite, or a POST request if it is not yet marked as favorite
     const method = isFavorite ? "DELETE" : "POST";
     fetch(
-      `https://my-flix-db-jd.herokuapp.com/users/${
+      `${API_BASE_URL}/users/${
         JSON.parse(localStorage.getItem("user")).Username
       }/movies/${encodeURIComponent(movieId)}`,
       {

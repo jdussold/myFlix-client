@@ -1,12 +1,12 @@
-> ⚠️ **Security Note:** This project uses Parcel 2.16.3, which has a [known dev server vulnerability](https://github.com/advisories/GHSA-qm9p-f9j5-w83w) (CVE-2025-56648). No patch is available yet. If you run the dev server locally, avoid visiting untrusted websites in the same browser session.
-
-# myFlix-client\*\*
+# myFlix-client
 
 https://myflix-jd.netlify.app/
 
 ## Table of Contents
 
 - [Overview](#overview)
+- [Stack](#stack)
+- [Local Development](#local-development)
 - [Users](#users)
 - [Features](#features)
 - [Components](#components)
@@ -20,6 +20,28 @@ https://myflix-jd.netlify.app/
 ## Overview
 
 This project is a client-side application built using React, that connects to an existing server-side codebase (REST API and database) for an application called myFlix. The goal is to create a polished, responsive, single-page application with routing and rich interactions, providing a seamless user experience for movie enthusiasts.
+
+## Stack
+
+- **React 19** + **react-router-dom 7**
+- **Vite 8** for dev server and production build
+- **react-bootstrap 2** on **Bootstrap 5.3** (`data-bs-theme="dark"`)
+- **Sass** via `sass-embedded`
+- Hosted on **Netlify**, talks to a Node.js/Express backend on **Render** at `https://movie-api-4c9y.onrender.com`
+
+## Local Development
+
+Requires **Node 22+** (see `.nvmrc`).
+
+```bash
+npm install
+cp .env.example .env.local   # optional — src/config.js falls back to the Render URL
+npm run dev                  # http://localhost:1234
+npm run build                # outputs dist/
+npm run preview              # serves the production build locally
+```
+
+The API base URL is read from `VITE_API_BASE_URL` (override per-environment in `.env.local`).
 
 ## Users
 
