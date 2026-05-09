@@ -16,7 +16,7 @@ export const NavigationBar = ({
   handleFilterSelection,
 }) => {
   return (
-    <Navbar bg="light" expand="lg">
+    <Navbar expand="lg">
       <Container>
         {/* Setting the brand name to MyFlix, with a link to the home page */}
         <Navbar.Brand style={{ color: "#FFA400" }} as={Link} to="/">

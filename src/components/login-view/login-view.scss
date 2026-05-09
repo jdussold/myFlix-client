@@ -1,4 +1,4 @@
-.center-card {
+.card.center-card {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -6,7 +6,7 @@
   box-shadow: 0 6px 10px 0 rgba(0, 0, 0, 0.2);
 }
 
-.center-card:focus-within {
+.card.center-card:focus-within {
   border: 1px solid #ffa400;
 }
 
