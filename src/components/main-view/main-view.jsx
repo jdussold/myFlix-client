@@ -1,4 +1,4 @@
-import { useState, useEffect, Modal } from "react";
+import { useState, useEffect } from "react";
 import { MovieCard } from "../movie-card/movie-card";
 import { MovieView } from "../movie-view/movie-view";
 import { LoginView } from "../login-view/login-view";
@@ -8,6 +8,7 @@ import { ProfileView } from "../profile-view/profile-view";
 import { Row, Col } from "react-bootstrap";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { PulseLoader } from "react-spinners";
+import { API_BASE_URL } from "../../config";
 import "./main-view.scss";
 
 export const MainView = () => {
@@ -40,7 +41,7 @@ export const MainView = () => {
 
   //Function to fetch movie data when authorized
   const getMovies = () => {
-    fetch("https://my-flix-db-jd.herokuapp.com/movies", {
+    fetch(`${API_BASE_URL}/movies`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((response) => response.json()) // Convert the response to JSON
@@ -76,7 +77,7 @@ export const MainView = () => {
     // Send a POST or DELETE request to the server
     const method = isFavorite ? "DELETE" : "POST";
     fetch(
-      `https://my-flix-db-jd.herokuapp.com/users/${
+      `${API_BASE_URL}/users/${
         JSON.parse(localStorage.getItem("user")).Username
       }/movies/${encodeURIComponent(movieId)}`,
       {
@@ -99,7 +100,7 @@ export const MainView = () => {
 
   const getUser = (username) => {
     // Fetch user data based on the passed in username
-    fetch(`https://my-flix-db-jd.herokuapp.com/users/${username}`, {
+    fetch(`${API_BASE_URL}/users/${username}`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,

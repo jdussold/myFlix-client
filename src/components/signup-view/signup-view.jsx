@@ -3,6 +3,7 @@ import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { Card } from "react-bootstrap";
 import logo from "../../img/logo-color.svg";
+import { API_BASE_URL } from "../../config";
 
 export const SignupView = ({ onLoggedIn }) => {
   // Declare state variables for the form inputs and the token
@@ -26,7 +27,7 @@ export const SignupView = ({ onLoggedIn }) => {
     };
 
     // Send a POST request to the server with the form data
-    fetch("https://my-flix-db-jd.herokuapp.com/users", {
+    fetch(`${API_BASE_URL}/users`, {
       method: "POST",
       body: JSON.stringify(data),
       headers: {
@@ -36,7 +37,7 @@ export const SignupView = ({ onLoggedIn }) => {
       // If the request was successful, log the user in
       if (response.ok) {
         // Send a request to the /login endpoint with the user's credentials
-        fetch("https://my-flix-db-jd.herokuapp.com/login", {
+        fetch(`${API_BASE_URL}/login`, {
           method: "POST",
           body: JSON.stringify({
             Username: username,
