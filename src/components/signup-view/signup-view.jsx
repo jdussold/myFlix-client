@@ -67,7 +67,19 @@ export const SignupView = ({ onLoggedIn }) => {
           .catch((error) => {
             console.log(error);
           });
+      } else {
+        response
+          .json()
+          .then((body) => {
+            const message =
+              body?.errors?.[0]?.msg || body?.message || "Signup failed";
+            alert(message);
+          })
+          .catch(() => alert("Signup failed"));
       }
+    }).catch((error) => {
+      console.error(error);
+      alert("Network error during signup. Please try again.");
     });
   };
 
@@ -88,6 +100,8 @@ export const SignupView = ({ onLoggedIn }) => {
               onChange={(e) => setUsername(e.target.value)}
               required
               minLength="3"
+              pattern="[A-Za-z0-9]+"
+              title="Letters and numbers only — no spaces or symbols."
             />
           </Form.Group>
 
