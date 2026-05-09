@@ -112,18 +112,25 @@ export const ProfileView = () => {
   };
   // Event handler for when the "Confirm" button in the modal is clicked
   const handleModalConfirm = () => {
-    // Send a request to the server to check if the entered password is correct
-    fetch(`${API_BASE_URL}/verify-password`, {
+    // Re-authenticate by hitting /login with the user's current password.
+    // If credentials are valid, proceed with the requested change; otherwise
+    // alert and bail.
+    fetch(`${API_BASE_URL}/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        username: user.Username,
-        password: modalPassword,
+        Username: user.Username,
+        Password: modalPassword,
       }),
     })
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Incorrect password");
+        }
+        return res.json();
+      })
       .then((response) => {
         // If the "Delete Account" button has been clicked, send a DELETE request to delete the user's account
         if (deleteClicked) {
@@ -203,13 +210,13 @@ export const ProfileView = () => {
         }
       })
       .catch((error) => {
-        // There was an error in the request or the response was not 2xx
         console.error(error);
         alert(
-          "An error occurred while verifying the password. Please try again."
+          error.message === "Incorrect password"
+            ? "The password you entered is incorrect."
+            : "An error occurred while verifying your password. Please try again."
         );
         setShowModal(false);
-        return;
       });
   };
 
