@@ -1,5 +1,17 @@
-$color: steelblue;
+// Global theme for myFlix.
+// Imported from index.jsx after Bootstrap, so it wins source-order cascade ties.
 
-.my-flix {
-  color: $color;
+body {
+  background-color: #151a2d;
+}
+
+.navbar {
+  background-color: #1f2941;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+}
+
+.navbar a,
+.navbar a:visited {
+  color: #ffa400;
 }

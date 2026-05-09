@@ -259,7 +259,7 @@ export const MainView = () => {
             element={
               <>
                 {/* Use a guard to only allow logged-in users to access the profile view */}
-                {user ? <ProfileView /> : <Navigate to="/login" />}
+                {user ? <ProfileView movies={movies} /> : <Navigate to="/login" />}
               </>
             }
           />

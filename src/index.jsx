@@ -1,6 +1,7 @@
 import { createRoot } from "react-dom/client";
 
 import { MainView } from "./components/main-view/main-view";
+import { ErrorBoundary } from "./components/error-boundary/error-boundary";
 import Container from "react-bootstrap/Container";
 
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -12,7 +13,9 @@ import "./index.scss";
 const MyFlixApplication = () => {
   return (
     <Container>
-      <MainView />
+      <ErrorBoundary>
+        <MainView />
+      </ErrorBoundary>
     </Container>
   );
 };

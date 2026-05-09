@@ -3,7 +3,7 @@ import { Button, Form, Row, Col, Modal } from "react-bootstrap";
 import { MovieCard } from "../movie-card/movie-card";
 import { API_BASE_URL } from "../../config";
 
-export const ProfileView = () => {
+export const ProfileView = ({ movies }) => {
   // Declare state variables for the form inputs, the token, and the displayForm state
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -17,8 +17,10 @@ export const ProfileView = () => {
   const [modalPassword, setModalPassword] = useState("");
   // Declare a state variable to store whether the "Delete Account" button has been clicked
   const [deleteClicked, setDeleteClicked] = useState(false);
-  const [favoriteMovies, setFavoriteMovies] = useState([]);
   const user = JSON.parse(localStorage.getItem("user"));
+  const [userFavoriteIds, setUserFavoriteIds] = useState(
+    user?.FavoriteMovies ?? []
+  );
 
   // Use effect hook to retrieve the current user's information from localStorage
   useEffect(() => {
@@ -28,13 +30,14 @@ export const ProfileView = () => {
   }, []); // The empty array ensures that this effect only runs on mount
 
   // set User data from server
-  const setUser = (user) => {
-    setUsername(user.Username);
-    setPassword(user.Password);
-    setEmail(user.Email);
+  const setUser = (userData) => {
+    setUsername(userData.Username);
+    setPassword(userData.Password);
+    setEmail(userData.Email);
     // Parse the birthday string and format it as yyyy-MM-dd
-    const date = new Date(user.Birthday);
+    const date = new Date(userData.Birthday);
     setBirthday(date.toISOString().substring(0, 10));
+    setUserFavoriteIds(userData.FavoriteMovies ?? []);
   };
 
   // Fetch user from server
@@ -49,43 +52,9 @@ export const ProfileView = () => {
       .then((response) => {
         // If the request was successful
         setUser(response);
-
-        getUserFavoriteMovies(response.FavoriteMovies);
       })
       .catch((error) => {
         alert("An error occurred while fetching your profile");
-      });
-  };
-
-  const getUserFavoriteMovies = (favoriteMovies) => {
-    fetch(`${API_BASE_URL}/movies`, {
-      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-    })
-      .then((response) => response.json()) // Convert the response to JSON
-      .then((data) => {
-        // Map the movie data from the API to a new format
-        const moviesFromApi = data.map((movie) => {
-          return {
-            id: movie._id,
-            title: movie.Title,
-            image: movie.ImagePath,
-            description: movie.Description,
-            genre: movie.Genre.Name,
-            director: movie.Director.Name,
-          };
-        });
-        // Filter the movies to get only the movies that are favorited by the current user
-        const userFavoriteMovies = moviesFromApi.filter((movie) =>
-          favoriteMovies.includes(movie.id)
-        );
-        // Sort movies alphabetically
-        userFavoriteMovies.sort((a, b) => (a.title > b.title ? 1 : -1));
-        // Update the favoriteMovies state with the user's favorite movies
-        setFavoriteMovies(userFavoriteMovies);
-      })
-      .catch((error) => {
-        // Display an alert if there is an error
-        window.alert("An error occurred: " + error);
       });
   };
 
@@ -112,18 +81,25 @@ export const ProfileView = () => {
   };
   // Event handler for when the "Confirm" button in the modal is clicked
   const handleModalConfirm = () => {
-    // Send a request to the server to check if the entered password is correct
-    fetch(`${API_BASE_URL}/verify-password`, {
+    // Re-authenticate by hitting /login with the user's current password.
+    // If credentials are valid, proceed with the requested change; otherwise
+    // alert and bail.
+    fetch(`${API_BASE_URL}/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        username: user.Username,
-        password: modalPassword,
+        Username: user.Username,
+        Password: modalPassword,
       }),
     })
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Incorrect password");
+        }
+        return res.json();
+      })
       .then((response) => {
         // If the "Delete Account" button has been clicked, send a DELETE request to delete the user's account
         if (deleteClicked) {
@@ -203,13 +179,13 @@ export const ProfileView = () => {
         }
       })
       .catch((error) => {
-        // There was an error in the request or the response was not 2xx
         console.error(error);
         alert(
-          "An error occurred while verifying the password. Please try again."
+          error.message === "Incorrect password"
+            ? "The password you entered is incorrect."
+            : "An error occurred while verifying your password. Please try again."
         );
         setShowModal(false);
-        return;
       });
   };
 
@@ -231,13 +207,18 @@ export const ProfileView = () => {
       .then((res) => res.json())
       .then((response) => {
         setUser(response);
-        getUserFavoriteMovies(response.FavoriteMovies);
         localStorage.setItem("user", JSON.stringify(response));
       })
       .catch((error) => {
         console.error(error);
       });
   };
+
+  // Derive the user's favorite movies from the global list (passed as a prop)
+  // and the current set of FavoriteMovies ids. Avoids a duplicate /movies fetch.
+  const favoriteMovies = movies
+    .filter((movie) => userFavoriteIds.includes(movie.id))
+    .sort((a, b) => (a.title > b.title ? 1 : -1));
 
   // Render the form or the current user information
   return (
