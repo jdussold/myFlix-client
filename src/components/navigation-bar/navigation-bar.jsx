@@ -54,7 +54,7 @@ export const NavigationBar = ({
           </Nav>
           {/* If a user is logged in then display search bar */}
           {user && (
-            <Form inline className="d-flex">
+            <Form className="d-flex">
               {/*Input field for searching */}
               <FormControl
                 type="text"
