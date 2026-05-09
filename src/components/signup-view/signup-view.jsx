@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { Card } from "react-bootstrap";
+import { Link } from "react-router-dom";
 import logo from "../../img/logo-color.svg";
 import { API_BASE_URL } from "../../config";
 
@@ -143,9 +144,9 @@ export const SignupView = ({ onLoggedIn }) => {
         <div className="text-center">
           <p>
             Already have an account?{" "}
-            <a href="/login">
+            <Link to="/login">
               <strong>LOG IN</strong>
-            </a>
+            </Link>
           </p>
         </div>
       </Card.Body>
